@@ -18,15 +18,16 @@ import nl.project.michaelmunatsi.ui.layouts.NewsArticle
 import nl.project.michaelmunatsi.ui.layouts.ProgressBar
 import nl.project.michaelmunatsi.viewModel.NewsViewModel
 
-object Main {
+object Favourite {
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun Screen(
         modifier: Modifier = Modifier,
         newsViewModel: NewsViewModel = hiltViewModel(),
-        onTitleClick: ()->Unit = {}
+        onArticleTitleClick: ()->Unit = {}
     ) {
         // val product by viewModel.myList.collectAsState()
+
         val productPaging = newsViewModel.article.collectAsLazyPagingItems()
         // val state = viewModel.state
         Surface(
@@ -36,11 +37,11 @@ object Main {
                 modifier = modifier.padding(25.dp)
             ) {
 
-                // display list of article
+                // display list of  favorite article
                 LazyColumn(modifier = modifier) {
                     items(productPaging) { item ->
                         if (item != null) {
-                            NewsArticle.Layout(article = item, onArticleTitleClick = onTitleClick)
+                            NewsArticle.Layout(article = item, onArticleTitleClick = onArticleTitleClick)
                         }
                     }
                     // show progress bar
@@ -52,5 +53,4 @@ object Main {
         }
     }
 }
-
 

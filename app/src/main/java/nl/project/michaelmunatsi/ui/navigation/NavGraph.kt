@@ -2,42 +2,60 @@ package nl.project.michaelmunatsi.ui.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import nl.project.michaelmunatsi.DetailPage
-import nl.project.michaelmunatsi.ui.screens.MainScreen
+import nl.project.michaelmunatsi.ui.screens.Detail
+import nl.project.michaelmunatsi.ui.screens.Favourite
+import nl.project.michaelmunatsi.ui.screens.Main
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NewsAppNavGraph() {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "home") {
-        composable("home") {
-            MainScreen(
-                onMainClick = { route ->
-                    navController.navigate(route)
-                }
-            )
+fun NewsAppNavGraph(
+    navController: NavHostController,
+    innerPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+) {
+
+    NavHost(
+        navController = navController,
+        startDestination = NavigationDestination.Home.screen_route,
+        modifier = modifier.padding(innerPadding)
+    ) {
+        composable(route = NavigationDestination.Home.screen_route) {
+            Main.Screen(onTitleClick = {
+                navController.navigate(NavigationDestination.Detail.screen_route)
+            })
+        }
+
+        composable(route = NavigationDestination.Favourite.screen_route) {
+            Favourite.Screen(onArticleTitleClick = {
+                navController.navigate(NavigationDestination.Detail.screen_route)
+            })
         }
 
         composable(
-            route = "details/{detailId}",
-            arguments = listOf(navArgument("detailId") {
-                type = NavType.IntType
-                nullable = false
+            route = NavigationDestination.Detail.screen_route, arguments = listOf(navArgument("detailId") {
+                type = NavType.StringType
+                nullable = true
             })
 
         ) {
-            DetailPage(
-                onDetailClick = { route ->
-                    navController.navigate(route)
-                },
-                detailId = it.arguments?.getInt("detailId") ?: -1,
+            Detail.Screen(
+                onBackBtnClick = {
+                    navController.popBackStack()
+                }
             )
         }
     }
 }
+
+//private fun NavHostController.navigateToSingleAccount(accountType: String) {
+//    this.navigateSingleTopTo("${SingleAccount.route}/$accountType")
+//}
