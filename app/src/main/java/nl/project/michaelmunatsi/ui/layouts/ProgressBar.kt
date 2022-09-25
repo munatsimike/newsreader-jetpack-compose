@@ -1,4 +1,4 @@
-package nl.project.michaelmunatsi.ui
+package nl.project.michaelmunatsi.ui.layouts
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -10,15 +10,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 // show progress bar
-@Composable
-fun ShowProgressBar(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-        horizontalArrangement = Arrangement.Center
-    )
-    {
-        CircularProgressIndicator()
+
+object ProgressBar {
+    @Composable
+    fun Layout(modifier: Modifier = Modifier) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            horizontalArrangement = Arrangement.Center
+        )
+        {
+            CircularProgressIndicator()
+        }
     }
 }

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">michael.munatsi</string>
+    <string name="navigation_destination_home">Home</string>
+    <string name="navigation_destination_detail">Detail</string>
+    <string name="navigation_destination_favourite">Favorite</string>
+    <string name="app_title">News reader app</string>
 </resources>
