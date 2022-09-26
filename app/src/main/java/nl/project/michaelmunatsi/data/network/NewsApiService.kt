@@ -8,6 +8,3 @@ interface NewsApiService {
     @GET("Articles")
     suspend fun getInitArticles(): ApiResponse<MyAPiResponse>
 }
-
-
-

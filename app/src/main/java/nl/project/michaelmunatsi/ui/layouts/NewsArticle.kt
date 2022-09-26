@@ -13,8 +13,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import nl.project.michaelmunatsi.model.NewsArticle
-import nl.project.michaelmunatsi.ui.LikeDisLike
 import nl.project.michaelmunatsi.utils.MyUtility.formatDate
 
 object NewsArticle {
@@ -22,7 +20,7 @@ object NewsArticle {
     @Composable
     fun Layout(
         modifier: Modifier = Modifier,
-        article: NewsArticle,
+        article: nl.project.michaelmunatsi.model.NewsArticle,
         onArticleTitleClick: () -> Unit
     ) {
         Card(
@@ -48,7 +46,7 @@ object NewsArticle {
 
                                 text = article.Title,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF512DA8)
+                                color = Color.Blue
                             )
                         }
 

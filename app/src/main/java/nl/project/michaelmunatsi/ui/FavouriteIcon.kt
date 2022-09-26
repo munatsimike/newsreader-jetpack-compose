@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LikeDislikeIcon(modifier: Modifier = Modifier, initState: Boolean = false) {
+fun LikeDislikeIcon(modifier: Modifier = Modifier, initState: Boolean = false, size:Int = 35) {
     val isChecked = remember { mutableStateOf(initState) }
     IconToggleButton(
 
@@ -28,7 +28,7 @@ fun LikeDislikeIcon(modifier: Modifier = Modifier, initState: Boolean = false) {
             contentDescription = "Icon",
             tint = if (isChecked.value) Color(0xFFE64A19) else Color(0xFFE64A19),
 
-            modifier = modifier.size(35.dp)
+            modifier = modifier.size(size.dp)
         )
     }
 }

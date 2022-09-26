@@ -1,4 +1,4 @@
-package nl.project.michaelmunatsi.ui
+package nl.project.michaelmunatsi.ui.layouts
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import nl.project.michaelmunatsi.ui.theme.Orange
 
 object LikeDisLike {
 
@@ -28,14 +28,10 @@ object LikeDisLike {
             Icon(
                 imageVector = if (isChecked.value) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                 contentDescription = "Icon",
-                tint = if (isChecked.value) Color(0xFFE64A19) else Color(0xFFE64A19),
+                tint = if (isChecked.value) Orange else Orange,
 
                 modifier = modifier.size(35.dp)
             )
-        }
-
-        fun myf(){
-
         }
     }
 }

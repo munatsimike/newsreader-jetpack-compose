@@ -6,7 +6,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class NavigationDestination(
-    val title: String,
+    val destination: String,
     val screen_route: String,
     val icon: ImageVector? = null,
 

@@ -28,34 +28,35 @@ fun NewsAppNavGraph(
         startDestination = NavigationDestination.Home.screen_route,
         modifier = modifier.padding(innerPadding)
     ) {
-        composable(route = NavigationDestination.Home.screen_route) {
-            Main.Screen(onTitleClick = {
-                navController.navigate(NavigationDestination.Detail.screen_route)
+        composable(
+            route = NavigationDestination.Home.screen_route
+        ) {
+            Main.Screen(onTitleClick = { articleId ->
+                navController.navigate(NavigationDestination.Detail.screen_route + "/$articleId")
             })
         }
 
         composable(route = NavigationDestination.Favourite.screen_route) {
-            Favourite.Screen(onArticleTitleClick = {
-                navController.navigate(NavigationDestination.Detail.screen_route)
+            Favourite.Screen(onArticleTitleClick = { articleId ->
+                navController.navigate(NavigationDestination.Detail.screen_route + "/$articleId")
             })
         }
 
         composable(
-            route = NavigationDestination.Detail.screen_route, arguments = listOf(navArgument("detailId") {
-                type = NavType.StringType
-                nullable = true
+            route = NavigationDestination.Detail.screen_route + "/{articleId}",
+            arguments = listOf(navArgument("articleId") {
+                type = NavType.IntType
             })
 
         ) {
             Detail.Screen(
                 onBackBtnClick = {
                     navController.popBackStack()
-                }
+                },
+                articleId = it.arguments?.getInt("articleId") ?: -1
             )
         }
     }
 }
 
-//private fun NavHostController.navigateToSingleAccount(accountType: String) {
-//    this.navigateSingleTopTo("${SingleAccount.route}/$accountType")
-//}
+

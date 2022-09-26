@@ -103,6 +103,8 @@ dependencies {
 // Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
+    implementation "androidx.paging:paging-runtime:3.1.1"
+
 }
 
 kapt {

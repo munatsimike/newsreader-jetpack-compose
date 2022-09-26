@@ -24,10 +24,10 @@ object Main {
     fun Screen(
         modifier: Modifier = Modifier,
         newsViewModel: NewsViewModel = hiltViewModel(),
-        onTitleClick: ()->Unit = {}
+        onTitleClick: (id: Int)->Unit = {}
     ) {
         // val product by viewModel.myList.collectAsState()
-        val productPaging = newsViewModel.article.collectAsLazyPagingItems()
+        val productPaging = newsViewModel.articles.collectAsLazyPagingItems()
         // val state = viewModel.state
         Surface(
             modifier = modifier.background(Color.Green)
@@ -40,7 +40,7 @@ object Main {
                 LazyColumn(modifier = modifier) {
                     items(productPaging) { item ->
                         if (item != null) {
-                            NewsArticle.Layout(article = item, onArticleTitleClick = onTitleClick)
+                            NewsArticle.Layout(article = item, onArticleTitleClick = { onTitleClick.invoke(item.Id) })
                         }
                     }
                     // show progress bar
