@@ -14,8 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NewsViewModel @Inject constructor(private val pager: NewsArticlePager) : ViewModel() {
-
-    var articles = Pager(config = PagingConfig(pageSize = 20), initialKey = 0) {
+    private val initKey = 0
+    var articles = Pager(config = PagingConfig(pageSize = 20), initialKey = initKey) {
         pager
     }.flow.cachedIn(viewModelScope)
 
