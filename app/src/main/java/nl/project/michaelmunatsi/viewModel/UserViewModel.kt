@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.data.repository.UserRepository
 import nl.project.michaelmunatsi.model.User
+import nl.project.michaelmunatsi.utils.MyUtility.resource
 import javax.inject.Inject
 
 @HiltViewModel
@@ -16,13 +18,13 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
 
     // login or a register user
     fun userLoginRegister(
-        user: User
+        user: User, selectedOption: String
     ) {
         viewModelScope.launch {
-            if (authToken.equals(null)) {
-                userRepository.userRegister(user)
-            } else {
+            if (selectedOption == resource.getString(R.string.login)) {
                 userRepository.userLogin(user)
+            } else {
+                userRepository.userRegister(user)
             }
         }
     }

@@ -1,30 +1,33 @@
 package nl.project.michaelmunatsi.model
 
+import nl.project.michaelmunatsi.R
+import nl.project.michaelmunatsi.utils.MyUtility.resource
+
 data class User(val username: String, val password: String) {
 
     companion object {
         // validate username on login or registration
         fun validateUsername(text: String): String {
             if (text.length < 8) {
-                return "Minimum 8 Character Password"
+                return resource.getString(R.string.username_must_contain_at_least_8_Character)
             } else if (!text.matches("^[0-9a-zA-Z]+$".toRegex())) {
-                return "Must contain letters and numbers only"
+                return resource.getString(R.string.username_must_contain_letters_numbers_only)
             }
-            return "valid"
+            return resource.getString(R.string.valid)
         }
 
         // validate password on login or user registration
-        fun validatePassword(password: String) : String{
+        fun validatePassword(password: String): String {
             if (password.length < 8) {
-                return "Minimum 8 Character Password"
+                return resource.getString(R.string.password_must_contain_at_least_8_Character)
             } else if (!password.matches(".*[A-Z].*".toRegex())) {
-                return "Must Contain 1 Upper-case Character"
+                return resource.getString(R.string.must_contain_1_upper_case_character)
             } else if (!password.matches(".*[a-z].*".toRegex())) {
-                return "Must Contain 1 Lower-case Character"
-            } else if (!password.matches(".*[@#\$%^&+=].*".toRegex())) {
-                return "Must Contain 1 Special Character (@#\$%^&+=)"
+                return resource.getString(R.string.must_contain_1_lower_case_character)
+            } else if (!password.matches(".*[@#*\$%^&+=].*".toRegex())) {
+                return resource.getString(R.string.must_contain_1_special_character)+ " [@#*\$%^&+=]"
             }
-            return "valid"
+            return resource.getString(R.string.valid)
         }
     }
 }

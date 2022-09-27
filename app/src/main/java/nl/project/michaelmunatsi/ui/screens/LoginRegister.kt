@@ -18,6 +18,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.hilt.navigation.compose.hiltViewModel
 import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.model.User
+import nl.project.michaelmunatsi.model.User.Companion.validatePassword
+import nl.project.michaelmunatsi.model.User.Companion.validateUsername
 import nl.project.michaelmunatsi.ui.theme.Purple500
 import nl.project.michaelmunatsi.utils.LocalDim
 import nl.project.michaelmunatsi.utils.MyUtility.resource
@@ -30,8 +32,11 @@ object LoginRegister {
         val dimen = LocalDim.current
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
-        val errorLabel by remember { mutableStateOf("") }
+        var errorLabel by remember { mutableStateOf("") }
         var passvisibility by remember { mutableStateOf(false) }
+
+        var isValidPassword by remember { mutableStateOf(false) }
+        var isValidUsername by remember { mutableStateOf(false) }
 
         var selectedOption by remember { mutableStateOf(resource.getString(R.string.login)) }
         val onSelectionChange = { text: String ->
@@ -90,17 +95,32 @@ object LoginRegister {
                     }
                 }
 
-                Text(modifier = modifier.padding(dimen.dp_10), text = errorLabel)
+                Text(
+                    modifier = modifier.padding(dimen.dp_15), text = errorLabel, color = Color.Red
+                )
+
                 OutlinedTextField(value = username, onValueChange = { newtText ->
                     username = newtText
-
+                    val result = validateUsername(newtText)
+                    if (result == resource.getString(R.string.valid)) {
+                        errorLabel = ""
+                        isValidUsername = true
+                    } else {
+                        errorLabel = result
+                    }
                 }, label = { Text(text = stringResource(id = R.string.username)) })
 
                 Spacer(modifier = Modifier.height(dimen.dp_15))
                 OutlinedTextField(value = password,
                     onValueChange = { newtText ->
                         password = newtText
-
+                        val result = validatePassword(newtText)
+                        if (result == resource.getString(R.string.valid)) {
+                            errorLabel = ""
+                            isValidPassword = true
+                        } else {
+                            errorLabel = result
+                        }
                     },
                     label = { Text(text = stringResource(id = R.string.password)) },
                     trailingIcon = {
@@ -125,7 +145,12 @@ object LoginRegister {
                 ) {
                     Button(
                         onClick = {
-                            userViewModel.userLoginRegister(User(username, password))
+                            if (isValidUsername && isValidPassword) {
+                                userViewModel.userLoginRegister(User(username, password), selectedOption)
+                                selectedOption = resource.getString(R.string.login)
+                            } else {
+                                errorLabel = resource.getString(R.string.Invalid_username_password)
+                            }
                         }, modifier = modifier.width(dimen.dp_200)
                     ) {
                         Text(text = selectedOption, fontSize = dimen.sp_20)

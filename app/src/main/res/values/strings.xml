@@ -12,4 +12,12 @@
     <string name="welcome">Welcome</string>
     <string name="password_icon">Password icon</string>
     <string name="logout">Logout</string>
+    <string name="valid">Valid</string>
+    <string name="Invalid_username_password">Invalid username or password</string>
+    <string name="username_must_contain_at_least_8_Character">Username must contain at least 8 Character </string>
+    <string name="password_must_contain_at_least_8_Character">Password must contain at least 8 Character </string>
+    <string name="username_must_contain_letters_numbers_only">Username must contain letters and numbers only</string>
+    <string name="must_contain_1_upper_case_character">Must Contain 1 Upper-case Character</string>
+    <string name="must_contain_1_lower_case_character">Must Contain 1 Lower-case Character</string>
+    <string name="must_contain_1_special_character">Must Contain 1 Special Character</string>
 </resources>
