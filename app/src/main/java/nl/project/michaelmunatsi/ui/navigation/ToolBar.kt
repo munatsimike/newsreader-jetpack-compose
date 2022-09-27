@@ -10,18 +10,24 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import nl.project.michaelmunatsi.R
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun NewsReaderToolBar(
     topBarState: MutableState<Boolean>,
+    modalBottomSheetState: ModalBottomSheetState,
     modifier: Modifier = Modifier,
 ) {
+    val scope = rememberCoroutineScope()
     AnimatedVisibility(
         visible = topBarState.value,
         enter = slideInVertically(initialOffsetY = { -it }),
@@ -35,25 +41,17 @@ fun NewsReaderToolBar(
                 )
             }, actions = {
                 IconButton(
-                    onClick = { /*TODO*/ }
+                    onClick = {
+                        scope.launch {
+                            modalBottomSheetState.show()
+                        }
+                    }
                 ) {
-                    Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "")
+                    Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "")
                 }
 
                 IconButton(onClick = { /*TODO*/ }) {
-                    Icon(imageVector = Icons.Filled.Settings, contentDescription = "")
-
-                    DropdownMenu(
-                        expanded = false,
-                        onDismissRequest = { false },
-                        offset = DpOffset(x = 0.dp, y = 4.dp)
-                    ) {
-                        DropdownMenuItem(
-                            onClick = { false }
-                        ) {
-                            Text(text = "Theme")
-                        }
-                    }
+                    Icon(painter = painterResource(id = R.drawable.ic_baseline_invert_colors_24), contentDescription = "" )
                 }
             })
         })

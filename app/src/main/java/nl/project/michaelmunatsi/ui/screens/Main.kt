@@ -16,6 +16,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import nl.project.michaelmunatsi.ui.layouts.NewsArticle
 import nl.project.michaelmunatsi.ui.layouts.ProgressBar
+import nl.project.michaelmunatsi.utils.MyUtility.dimen
 import nl.project.michaelmunatsi.viewModel.NewsViewModel
 
 object Main {
@@ -33,7 +34,7 @@ object Main {
             modifier = modifier.background(Color.Green)
         ) {
             Column(
-                modifier = modifier.padding(25.dp)
+                modifier = modifier.padding(dimen.dp_25)
             ) {
 
                 // display list of article

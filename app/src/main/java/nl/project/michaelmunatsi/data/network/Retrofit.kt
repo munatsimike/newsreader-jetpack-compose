@@ -39,3 +39,9 @@ object NewsApi {
         retrofit.create(NewsApiService::class.java)
     }
 }
+
+object UserApi {
+    val retrofitService: UserService by lazy {
+        retrofit.create(UserService::class.java)
+    }
+}

@@ -1,5 +1,6 @@
 package nl.project.michaelmunatsi.utils
 
+import android.content.res.Resources
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
@@ -7,11 +8,22 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 object MyUtility {
+
+    lateinit var resource: Resources
+    lateinit var dimen: Dimensions
+
+    @Composable
+    fun InitResources(){
+        resource = LocalContext.current.resources
+        dimen = LocalDim.current
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun formatDate(localDateTime: String): String {
         val date = LocalDateTime.parse(localDateTime)

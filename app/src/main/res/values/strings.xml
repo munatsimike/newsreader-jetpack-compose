@@ -4,4 +4,11 @@
     <string name="navigation_destination_detail">Detail</string>
     <string name="navigation_destination_favourite">Favorite</string>
     <string name="app_title">News reader app</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="favourite_icon">Favourite icon</string>
+    <string name="welcome">Welcome</string>
+    <string name="logout">Logout</string>
 </resources>

@@ -12,7 +12,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import nl.project.michaelmunatsi.model.NewsArticle
-import nl.project.michaelmunatsi.utils.formatDate
+import nl.project.michaelmunatsi.utils.MyUtility.dimen
+import nl.project.michaelmunatsi.utils.MyUtility.formatDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -23,19 +24,19 @@ fun NewsArticleLayout(
 ) {
     Card(
         modifier = modifier
-            .paddingFromBaseline(bottom = 40.dp)
-            .clip(RoundedCornerShape(10.dp)),
+            .paddingFromBaseline(bottom = dimen.dp_40)
+            .clip(RoundedCornerShape(dimen.dp_10)),
         elevation = 8.dp,
 
     ) {
         Column(
-            modifier = modifier.padding(15.dp)
+            modifier = modifier.padding(dimen.dp_15)
         ) {
             Row {
                 // show article image
                 ImageViewer(imageUrl = article.Image, size = 110, cornerRadius = 10)
 
-                Spacer(modifier = modifier.width(15.dp))
+                Spacer(modifier = modifier.width(dimen.dp_15))
                 // display article title
                 Column() {
                     Text(
@@ -47,7 +48,7 @@ fun NewsArticleLayout(
                     Row {
                         Text(
                             text = formatDate(article.PublishDate),
-                            modifier = modifier.padding(15.dp)
+                            modifier = modifier.padding(dimen.dp_15)
                         )
                         Spacer(modifier = modifier.weight(1f))
                         // like or dislike and article
