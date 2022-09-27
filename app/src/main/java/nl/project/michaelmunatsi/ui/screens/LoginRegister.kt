@@ -3,17 +3,21 @@ package nl.project.michaelmunatsi.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.hilt.navigation.compose.hiltViewModel
 import nl.project.michaelmunatsi.R
+import nl.project.michaelmunatsi.model.User
 import nl.project.michaelmunatsi.ui.theme.Purple500
 import nl.project.michaelmunatsi.utils.LocalDim
 import nl.project.michaelmunatsi.utils.MyUtility.resource
@@ -27,14 +31,18 @@ object LoginRegister {
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         val errorLabel by remember { mutableStateOf("") }
+        var passvisibility by remember { mutableStateOf(false) }
 
-        var selectedOption by remember {
-            mutableStateOf(resource.getString(R.string.login))
-        }
+        var selectedOption by remember { mutableStateOf(resource.getString(R.string.login)) }
         val onSelectionChange = { text: String ->
             selectedOption = text
         }
 
+        val icon = if (passvisibility) {
+            R.drawable.ic_baseline_visibility_24
+        } else {
+            R.drawable.ic_baseline_visibility_off_24
+        }
         val options = listOf(
             R.string.login, R.string.register
         )
@@ -89,18 +97,36 @@ object LoginRegister {
                 }, label = { Text(text = stringResource(id = R.string.username)) })
 
                 Spacer(modifier = Modifier.height(dimen.dp_15))
-                OutlinedTextField(value = password, onValueChange = { newtText ->
-                    password = newtText
+                OutlinedTextField(value = password,
+                    onValueChange = { newtText ->
+                        password = newtText
 
-                }, label = { Text(text = stringResource(id = R.string.password)) })
+                    },
+                    label = { Text(text = stringResource(id = R.string.password)) },
+                    trailingIcon = {
+                        IconButton(onClick = { passvisibility = !passvisibility }) {
+                            Icon(
+                                painter = painterResource(id = icon),
+                                contentDescription = stringResource(
+                                    id = R.string.password_icon
+                                )
+                            )
+
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                    ),
+                    visualTransformation = if (passvisibility) VisualTransformation.None else PasswordVisualTransformation()
+                )
                 Spacer(modifier = Modifier.height(dimen.dp_15))
                 Row(
                     modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
                 ) {
                     Button(
-                        onClick = { userViewModel.userLoginRegister(username, password) },
-                        modifier = modifier
-                            .width(dimen.dp_200)
+                        onClick = {
+                            userViewModel.userLoginRegister(User(username, password))
+                        }, modifier = modifier.width(dimen.dp_200)
                     ) {
                         Text(text = selectedOption, fontSize = dimen.sp_20)
                     }

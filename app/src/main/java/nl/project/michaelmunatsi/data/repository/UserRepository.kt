@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import nl.project.michaelmunatsi.data.network.UserApi
 import nl.project.michaelmunatsi.model.Token
+import nl.project.michaelmunatsi.model.User
 import nl.project.michaelmunatsi.utils.Coroutines
 import javax.inject.Inject
 
@@ -16,17 +17,17 @@ class UserRepository @Inject constructor(
     val authToken = userManager.getAuthToken
 
     suspend fun userLogin(
-        username: String, password: String
+        user: User
     ) {
-        UserApi.retrofitService.userLoginAsync(username, password).onSuccess {
+        UserApi.retrofitService.userLoginAsync(user.username, user.password).onSuccess {
             Coroutines.io { saveAuthToken(data) }
         }.onError {}.onFailure { }
     }
 
     suspend fun userRegister(
-        username: String, password: String
+      user: User
     ) {
-        UserApi.retrofitService.registerUserAsync(username, password).onSuccess { }.onError { }
+        UserApi.retrofitService.registerUserAsync(user.username, user.password).onSuccess { }.onError { }
             .onFailure { }
     }
 
