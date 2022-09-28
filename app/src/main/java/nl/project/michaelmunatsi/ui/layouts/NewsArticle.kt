@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -14,12 +15,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import nl.project.michaelmunatsi.utils.MyUtility.formatDate
+import nl.project.michaelmunatsi.viewModel.UserViewModel
 
 object NewsArticle {
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun Layout(
         modifier: Modifier = Modifier,
+        scaffoldState: ScaffoldState,
+        userViewModel: UserViewModel,
         article: nl.project.michaelmunatsi.model.NewsArticle,
         onArticleTitleClick: () -> Unit
     ) {
@@ -58,7 +62,7 @@ object NewsArticle {
                             )
                             Spacer(modifier = modifier.weight(1f))
                             // like or dislike and article
-                            LikeDisLike.Layout()
+                            LikeDisLike.Layout(isChecked = article.IsLiked, scaffoldState = scaffoldState, userViewModel = userViewModel)
                         }
                     }
                 }

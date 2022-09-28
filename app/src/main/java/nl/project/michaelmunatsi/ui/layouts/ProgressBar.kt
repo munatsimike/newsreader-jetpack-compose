@@ -7,13 +7,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import nl.project.michaelmunatsi.ui.theme.Orange
 
 // show progress bar
-
 object ProgressBar {
     @Composable
-    fun Layout(modifier: Modifier = Modifier) {
+    fun Show(modifier: Modifier = Modifier) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
@@ -21,7 +22,9 @@ object ProgressBar {
             horizontalArrangement = Arrangement.Center
         )
         {
-            CircularProgressIndicator()
+            CircularProgressIndicator(
+                color = Orange
+            )
         }
     }
 }

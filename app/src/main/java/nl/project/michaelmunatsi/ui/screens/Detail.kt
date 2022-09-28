@@ -5,10 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
@@ -16,17 +13,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import nl.project.michaelmunatsi.model.NewsArticle
 import nl.project.michaelmunatsi.ui.ImageViewer
-import nl.project.michaelmunatsi.ui.LikeDislikeIcon
+import nl.project.michaelmunatsi.ui.layouts.LikeDisLike
 import nl.project.michaelmunatsi.ui.theme.Orange
 import nl.project.michaelmunatsi.ui.theme.Transparent
 import nl.project.michaelmunatsi.utils.MyUtility.UrlLinkBuilder
 import nl.project.michaelmunatsi.utils.MyUtility.dimen
 import nl.project.michaelmunatsi.viewModel.NewsViewModel
+import nl.project.michaelmunatsi.viewModel.UserViewModel
 
 object Detail {
     @Composable
@@ -34,7 +30,9 @@ object Detail {
         modifier: Modifier = Modifier,
         onBackBtnClick: () -> Unit = {},
         articleId: Int,
-        viewModel: NewsViewModel = hiltViewModel()
+        viewModel: NewsViewModel = hiltViewModel(),
+        scaffoldState: ScaffoldState,
+        userViewModel: UserViewModel
     ) {
         var newsArticle: NewsArticle? by remember { mutableStateOf(null) }
         LaunchedEffect(articleId) {
@@ -83,7 +81,7 @@ object Detail {
                                 text = "Related", fontSize = dimen.sp_20, fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = modifier.weight(1f))
-                            LikeDislikeIcon()
+                            LikeDisLike.Layout(isChecked = article.IsLiked, scaffoldState = scaffoldState, userViewModel = userViewModel)
                         }
 
                         article.Related.forEach { link ->

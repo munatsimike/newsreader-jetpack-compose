@@ -1,8 +1,5 @@
 package nl.project.michaelmunatsi.data
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import nl.project.michaelmunatsi.data.repository.NewsRepository
@@ -12,12 +9,10 @@ import nl.project.michaelmunatsi.model.NewsArticleMapper
 import javax.inject.Inject
 
 class NewsArticlePager @Inject constructor(
-    private val newsRepo: NewsRepository,
-    private val newsMapper: NewsArticleMapper
+    private val newsRepo: NewsRepository, private val newsMapper: NewsArticleMapper
 ) : PagingSource<Int, NewsArticle>() {
 
-    var state by mutableStateOf(PagingState())
-    private var nextId: Int = 0
+    private var nextId: Int? = null
 
     override val keyReuseSupported: Boolean = true
 
@@ -26,30 +21,32 @@ class NewsArticlePager @Inject constructor(
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, NewsArticle> {
-        val result = fetch(params.key).getOrElse {
-            return LoadResult.Error(it)
+        return try {
+            val data = fetch(params.key)
+            LoadResult.Page(data = data, null, nextKey = nextId)
+        } catch (e: Exception) {
+            LoadResult.Error(e)
         }
-        // key
-        return LoadResult.Page(result, null, nextKey = nextId)
     }
 
-    private suspend fun fetch(key: Int?): Result<List<NewsArticle>> {
+    private suspend fun fetch(key: Int?): List<NewsArticle> {
         val response: Result<List<NewsArticle>>
         val result: MyAPiResponse
         if (key == 0) {
             result = newsRepo.fetchFirstArticleBatch()
             response = newsMapper.mapList(result.Results)
         } else {
-            result = newsRepo.getMoreArticles(nextId)
+            result = nextId?.let { newsRepo.getMoreArticles(it) }!!
             response = newsMapper.mapList(result.Results)
         }
         nextId = result.NextId
-        return response
+        return getMapperResult(response)
+    }
+
+    private fun getMapperResult(result: Result<List<NewsArticle>>): List<NewsArticle> {
+        val mapperResult = result.getOrElse {
+            throw it
+        }
+        return mapperResult
     }
 }
-
-data class PagingState(
-    var isLoading: Boolean = false,
-    var notLoading: Boolean = false,
-    val error: String? = null,
-)

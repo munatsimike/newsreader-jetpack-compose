@@ -6,18 +6,27 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import nl.project.michaelmunatsi.data.NewsArticlePager
+import nl.project.michaelmunatsi.data.repository.NewsRepository
 import nl.project.michaelmunatsi.model.Category
 import nl.project.michaelmunatsi.model.NewsArticle
+import nl.project.michaelmunatsi.model.NewsArticleMapper
 import javax.inject.Inject
 
 @HiltViewModel
-class NewsViewModel @Inject constructor(private val pager: NewsArticlePager) : ViewModel() {
+class NewsViewModel @Inject constructor(
+    private val newsRepository: NewsRepository,
+    private val newsArticleMapper: NewsArticleMapper
+) : ViewModel() {
     private val initKey = 0
-    var articles = Pager(config = PagingConfig(pageSize = 20), initialKey = initKey) {
-        pager
-    }.flow.cachedIn(viewModelScope)
+    val pagingData = Pager(
+        config = PagingConfig(pageSize = 20), initialKey = initKey
+    ) { NewsArticlePager(newsRepository, newsArticleMapper) }.flow.cachedIn(viewModelScope)
 
     fun getArticle(articleId: Int): NewsArticle {
 //        articles.collectLatest { pagingData ->

@@ -3,30 +3,39 @@ package nl.project.michaelmunatsi.ui.navigation
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import kotlinx.coroutines.launch
+import nl.project.michaelmunatsi.R
+import nl.project.michaelmunatsi.model.state.UserState
+import nl.project.michaelmunatsi.ui.showSnackBar
+import nl.project.michaelmunatsi.utils.MyUtility
+import nl.project.michaelmunatsi.utils.MyUtility.resource
+import nl.project.michaelmunatsi.viewModel.UserViewModel
 
 @Composable
-fun BottomNavigationMenuBuilder(
+fun BottomNavigationMenu(
     navController: NavController,
     bottomBarState: MutableState<Boolean>,
+    scaffoldState: ScaffoldState,
+    userViewModel: UserViewModel,
     modifier: Modifier = Modifier,
-    items: List<NavigationDestination> = listOf(
+
+    ) {
+    val items: List<NavigationDestination> = listOf(
         NavigationDestination.Home, NavigationDestination.Favourite
-    ),
-    selectedItemColor: Color = Color.Red,
-    unselectedIItemColor: Color = Color.White
-) {
-    AnimatedVisibility(visible = bottomBarState.value,
+    )
+    val selectedItemColor: Color = Color.Red
+    val unselectedIItemColor: Color = Color.White
+
+    val userState by userViewModel.userState.collectAsState()
+    val scope = rememberCoroutineScope()
+    AnimatedVisibility(
+        visible = bottomBarState.value,
         enter = slideInVertically(initialOffsetY = { it }),
         exit = slideOutVertically(targetOffsetY = { it }),
         content = {
@@ -49,15 +58,23 @@ fun BottomNavigationMenuBuilder(
                         unselectedContentColor = unselectedIItemColor,
                         selected = currentRoute == item.screen_route,
                         onClick = {
-                            navController.navigate(item.screen_route) {
+                            if (NavigationDestination.Favourite.destination == item.destination && userState == UserState.LoggedOut) {
+                                showSnackBar(
+                                    message = resource.getString(R.string.user_not_logged_in),
+                                    coroutineScope = scope,
+                                    scaffoldState = scaffoldState
+                                )
+                            } else {
+                                navController.navigate(item.screen_route) {
 
-                                navController.graph.startDestinationRoute?.let { screen_route ->
-                                    popUpTo(screen_route) {
-                                        saveState = true
+                                    navController.graph.startDestinationRoute?.let { screen_route ->
+                                        popUpTo(screen_route) {
+                                            saveState = true
+                                        }
                                     }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
                         })
                 }
