@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import nl.project.michaelmunatsi.utils.MyUtility.formatDate
+import nl.project.michaelmunatsi.viewModel.NewsViewModel
 import nl.project.michaelmunatsi.viewModel.UserViewModel
 
 object NewsArticle {
@@ -24,17 +25,17 @@ object NewsArticle {
         modifier: Modifier = Modifier,
         scaffoldState: ScaffoldState,
         userViewModel: UserViewModel,
+        sharedViewModel: NewsViewModel,
         article: nl.project.michaelmunatsi.model.NewsArticle,
         onArticleTitleClick: () -> Unit
     ) {
         Card(
             modifier = modifier
-                .paddingFromBaseline(bottom = 40.dp)
-                .clip(RoundedCornerShape(10.dp)),
-            elevation = 8.dp,
-            backgroundColor = Color(0xFFE9E4E4)
+                .padding(bottom = 2.dp)
+                .clip(RoundedCornerShape(0.dp)),
+            elevation = 10.dp,
 
-        ) {
+            ) {
             Column(
                 modifier = modifier.padding(15.dp)
             ) {
@@ -45,7 +46,12 @@ object NewsArticle {
                     Spacer(modifier = modifier.width(15.dp))
                     // display article title
                     Column() {
-                        TextButton(onClick = onArticleTitleClick) {
+                        TextButton(
+                            onClick = {
+                                sharedViewModel.saveClickedArticle(article)
+                                onArticleTitleClick.invoke()
+                            }
+                        ) {
                             Text(
 
                                 text = article.Title,
@@ -62,7 +68,11 @@ object NewsArticle {
                             )
                             Spacer(modifier = modifier.weight(1f))
                             // like or dislike and article
-                            LikeDisLike.Layout(isChecked = article.IsLiked, scaffoldState = scaffoldState, userViewModel = userViewModel)
+                            LikeDisLike.Layout(
+                                isChecked = article.IsLiked,
+                                scaffoldState = scaffoldState,
+                                userViewModel = userViewModel
+                            )
                         }
                     }
                 }

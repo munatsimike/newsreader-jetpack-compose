@@ -17,13 +17,17 @@ class NewsArticlePager @Inject constructor(
     override val keyReuseSupported: Boolean = true
 
     override fun getRefreshKey(state: PagingState<Int, NewsArticle>): Int? {
-        return null
+        return state.anchorPosition?.let { anchorPosition ->
+            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
+                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
+        }
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, NewsArticle> {
         return try {
+            val prevKey = if (params.key!! > 0) params.key!! - 1 else null
             val data = fetch(params.key)
-            LoadResult.Page(data = data, null, nextKey = nextId)
+            LoadResult.Page(data = data, prevKey, nextKey = nextId)
         } catch (e: Exception) {
             LoadResult.Error(e)
         }

@@ -8,13 +8,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.hilt.navigation.compose.hiltViewModel
-import nl.project.michaelmunatsi.model.NewsArticle
+import androidx.compose.ui.unit.dp
 import nl.project.michaelmunatsi.ui.ImageViewer
 import nl.project.michaelmunatsi.ui.layouts.LikeDisLike
 import nl.project.michaelmunatsi.ui.theme.Orange
@@ -30,17 +29,13 @@ object Detail {
         modifier: Modifier = Modifier,
         onBackBtnClick: () -> Unit = {},
         articleId: Int,
-        viewModel: NewsViewModel = hiltViewModel(),
+        sharedNewsViewModel: NewsViewModel,
         scaffoldState: ScaffoldState,
-        userViewModel: UserViewModel
+        sharedUserViewModel: UserViewModel
     ) {
-        var newsArticle: NewsArticle? by remember { mutableStateOf(null) }
-        LaunchedEffect(articleId) {
-            newsArticle = viewModel.getArticle(articleId)
-        }
+        val newsArticle = sharedNewsViewModel.selectedArticle
 
-        if (newsArticle != null) {
-            val article: NewsArticle = newsArticle as NewsArticle
+        if (newsArticle != null && newsArticle.Id == articleId) {
             Surface(
                 modifier = modifier.fillMaxHeight()
             ) {
@@ -48,17 +43,15 @@ object Detail {
                     modifier = modifier.verticalScroll(rememberScrollState())
                 ) {
                     Box {
-                        ImageViewer(imageUrl = article.Image, size = 380)
+                        ImageViewer(imageUrl = newsArticle.Image, size = 380)
                         Box(
                             modifier = modifier
                                 .padding(dimen.dp_20)
                                 .clip(CircleShape)
-                                .size(dimen.dp_40)
-                        )
-                        {
+                                .size(40.dp)
+                        ) {
                             IconButton(
-                                modifier = modifier
-                                    .background(Transparent),
+                                modifier = modifier.background(Transparent),
                                 onClick = onBackBtnClick
                             ) {
                                 Icon(
@@ -71,21 +64,29 @@ object Detail {
                         }
                     }
                     Column(modifier = modifier.padding(dimen.dp_15)) {
-                        Text(text = article.Summary)
+                        Text(text = newsArticle.Summary)
                         Spacer(modifier = modifier.height(dimen.dp_15))
-                        UrlLinkBuilder(url = article.Url)
+                        UrlLinkBuilder(url = newsArticle.Url)
                         Row(
                             verticalAlignment = Alignment.Bottom
                         ) {
-                            if (article.Related.isNotEmpty()) Text(
-                                text = "Related", fontSize = dimen.sp_20, fontWeight = FontWeight.Bold
+                            if (newsArticle.Related.isNotEmpty()) Text(
+                                text = "Related",
+                                fontSize = dimen.sp_20,
+                                fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = modifier.weight(1f))
-                            LikeDisLike.Layout(isChecked = article.IsLiked, scaffoldState = scaffoldState, userViewModel = userViewModel)
+                            LikeDisLike.Layout(
+                                isChecked = newsArticle.IsLiked,
+                                scaffoldState = scaffoldState,
+                                userViewModel = sharedUserViewModel
+                            )
                         }
-
-                        article.Related.forEach { link ->
-                            UrlLinkBuilder(url = link)
+                        for (index in newsArticle.Related.indices) {
+                            UrlLinkBuilder(
+                                index = (index + 1).toString(),
+                                url = newsArticle.Related[index]
+                            )
                         }
                     }
                 }
@@ -93,3 +94,4 @@ object Detail {
         }
     }
 }
+

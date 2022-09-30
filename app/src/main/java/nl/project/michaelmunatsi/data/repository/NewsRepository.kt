@@ -25,7 +25,6 @@ class NewsRepository @Inject constructor() {
         }.onError {
             onErrorMessage(statusCode = statusCode.code, message = message())
         }
-        onFailureMessage()
         return apiResponse
     }
 

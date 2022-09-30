@@ -4,12 +4,14 @@ import android.content.res.Resources
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.unit.dp
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -19,7 +21,7 @@ object MyUtility {
     lateinit var dimen: Dimensions
 
     @Composable
-    fun InitResources(){
+    fun InitResources() {
         resource = LocalContext.current.resources
         dimen = LocalDim.current
     }
@@ -32,18 +34,26 @@ object MyUtility {
     }
 
     @Composable
-    fun UrlLinkBuilder(modifier: Modifier = Modifier, url: String, text: String = url) {
+    fun UrlLinkBuilder(
+        modifier: Modifier = Modifier,
+        url: String,
+        index: String = "",
+        text: String = url
+    ) {
         val uriHandler = LocalUriHandler.current
-        Text(
-            modifier = modifier
-                .clickable {
-                    uriHandler.openUri(url)
-                },
+        Row(modifier=modifier.padding(6.dp)) {
+            Text(text = index)
+            Spacer(modifier = modifier.width(6.dp))
+            Text(
+                modifier = modifier
+                    .clickable {
+                        uriHandler.openUri(url)
+                    },
 
-            text = text,
-            color = Color.Blue
-        )
-
+                text = text,
+                color = Color.Blue
+            )
+        }
     }
 
     fun destinationFromUrl(destinationUrl: String): String {

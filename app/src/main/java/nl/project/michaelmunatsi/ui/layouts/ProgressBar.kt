@@ -1,5 +1,6 @@
 package nl.project.michaelmunatsi.ui.layouts
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,7 @@ object ProgressBar {
         Row(
             modifier = modifier
                 .fillMaxWidth()
+                .background(Color.White)
                 .padding(10.dp),
             horizontalArrangement = Arrangement.Center
         )

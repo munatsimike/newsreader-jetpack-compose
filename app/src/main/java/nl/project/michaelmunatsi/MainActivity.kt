@@ -34,6 +34,7 @@ import nl.project.michaelmunatsi.ui.theme.MichaelmunatsiTheme
 import nl.project.michaelmunatsi.utils.MyUtility.InitResources
 import nl.project.michaelmunatsi.utils.MyUtility.destinationFromUrl
 import nl.project.michaelmunatsi.utils.MyUtility.dimen
+import nl.project.michaelmunatsi.viewModel.NewsViewModel
 import nl.project.michaelmunatsi.viewModel.UserViewModel
 
 @AndroidEntryPoint
@@ -85,22 +86,23 @@ class MainActivity : ComponentActivity() {
         topBarState: MutableState<Boolean>,
         bottomBarState: MutableState<Boolean>,
         scaffoldState: ScaffoldState,
-        userViewModel: UserViewModel = hiltViewModel()
+        sharedUserViewModel: UserViewModel = hiltViewModel(),
+        sharedNewsViewModel: NewsViewModel = hiltViewModel()
     ) {
         LaunchedEffect(Unit) {
-            userViewModel.authToken.collectLatest {
-                userViewModel.updateUserState(it)
+            sharedUserViewModel.authToken.collectLatest {
+                sharedUserViewModel.updateUserState(it)
             }
         }
-        val userState by userViewModel.userState.collectAsState()
+        val userState by sharedUserViewModel.userState.collectAsState()
         ModalBottomSheetLayout(
             sheetContent = {
                 when (userState) {
                     is UserState.LoggedIn -> {
-                        Logout.Screen()
+                        Logout.Screen(sharedUserViewModel)
                     }
                     is UserState.LoggedOut -> {
-                        LoginRegister.Screen()
+                        LoginRegister.Screen(sharedUserViewModel)
                     }
                 }
             },
@@ -117,13 +119,13 @@ class MainActivity : ComponentActivity() {
                     )
                 }, bottomBar = {
                     BottomNavigationMenu(
-                        navController, bottomBarState,scaffoldState,userViewModel
+                        navController, bottomBarState,scaffoldState,sharedUserViewModel
                     )
                 }, scaffoldState = scaffoldState, snackbarHost = {
                     scaffoldState.snackbarHostState
                 }) { innerPadding ->
                     Box(modifier = modifier.padding(innerPadding)) {
-                        NewsAppNavGraph(navController, scaffoldState, userViewModel)
+                        NewsAppNavGraph(navController, scaffoldState, sharedUserViewModel, sharedNewsViewModel)
                         DefaultSnackBar(
                             snackbarHostState = scaffoldState.snackbarHostState, onAction = {
                                 scaffoldState.snackbarHostState.currentSnackbarData?.performAction()

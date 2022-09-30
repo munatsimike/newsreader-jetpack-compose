@@ -15,9 +15,10 @@ import nl.project.michaelmunatsi.viewModel.UserViewModel
 object Logout {
     @Composable
     fun Screen(
+        sharedUserViewModel: UserViewModel,
         modifier: Modifier = Modifier,
-        userViewModel: UserViewModel = hiltViewModel()
-    ) {
+
+        ) {
         Box(
             modifier = modifier
                 .fillMaxWidth()
@@ -35,7 +36,7 @@ object Logout {
                 }
                 Spacer(modifier = modifier.height(dimen.dp_10))
                 Button(
-                    onClick = { userViewModel.logout() },
+                    onClick = { sharedUserViewModel.logout() },
                     modifier = modifier.width(dimen.dp_200)
                 ) {
                     Text(text = stringResource(id = R.string.logout), fontSize = dimen.sp_20)

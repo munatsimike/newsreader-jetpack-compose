@@ -15,7 +15,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.hilt.navigation.compose.hiltViewModel
 import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.model.User
 import nl.project.michaelmunatsi.model.state.FormState
@@ -32,7 +31,7 @@ object LoginRegister {
     private lateinit var selectedOption: MutableState<String>
 
     @Composable
-    fun Screen(modifier: Modifier = Modifier, userViewModel: UserViewModel = hiltViewModel()) {
+    fun Screen(sharedUserViewModel: UserViewModel,modifier: Modifier = Modifier) {
         selectedOption = remember { mutableStateOf(resource.getString(R.string.login)) }
         val onSelectionChange = { text: String ->
             selectedOption.value = text
@@ -67,7 +66,7 @@ object LoginRegister {
                             .fillMaxWidth(length)
                             .clickable {
                                 onSelectionChange(resource.getString(text))
-                                userViewModel.onFormEvent(FormState.ToggleForm)
+                                sharedUserViewModel.onFormEvent(FormState.ToggleForm)
                             }
                             .background(
                                 if (stringResource(id = text) == selectedOption.value) {
@@ -85,7 +84,7 @@ object LoginRegister {
                         }
                     }
                 }
-                LoginRegisterForm(userViewModel, selectedOption.value)
+                LoginRegisterForm(sharedUserViewModel, selectedOption.value)
             }
         }
     }
