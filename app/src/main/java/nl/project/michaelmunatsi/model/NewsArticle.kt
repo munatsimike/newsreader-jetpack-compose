@@ -1,14 +1,14 @@
 package nl.project.michaelmunatsi.model
 
-data class NewsArticle(
-    val Id: Int,
-    val Categories: List<Category>,
-    val Feed: Int,
-    val Image: String,
-    val IsLiked: Boolean,
-    val PublishDate: String,
-    val Related: List<String>,
-    val Summary: String,
-    val Title: String,
-    val Url: String
+class NewsArticle(
+    var Id: Int,
+    var Categories: List<Category>,
+    var Feed: Int,
+    var Image: String,
+    var IsLiked: Boolean,
+    var PublishDate: String,
+    var Related: List<String>,
+    var Summary: String,
+    var Title: String,
+    var Url: String
 )

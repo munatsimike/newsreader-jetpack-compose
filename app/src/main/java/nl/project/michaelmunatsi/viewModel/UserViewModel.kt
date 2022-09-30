@@ -38,6 +38,16 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
     init {
         updateUserState()
         handleApiResponsesMessages()
+        updateHeaderToken()
+    }
+
+    // update token that will be used  to fetch articles
+    fun updateHeaderToken(){
+        viewModelScope.launch {
+            authToken.collectLatest {
+                updateHeaderToken(it)
+            }
+        }
     }
 
     private fun updateUserState() {
@@ -69,7 +79,6 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
             _userState.value = UserState.LoggedOut
         } else {
             _userState.value = UserState.LoggedIn
-            updateHeaderToken(token)
         }
     }
 

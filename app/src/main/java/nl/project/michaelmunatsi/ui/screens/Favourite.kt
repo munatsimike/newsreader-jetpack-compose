@@ -2,17 +2,9 @@ package nl.project.michaelmunatsi.ui.screens
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.compose.collectAsLazyPagingItems
-import nl.project.michaelmunatsi.ui.layouts.NewsArticle
-import nl.project.michaelmunatsi.ui.layouts.ProgressBar
-import nl.project.michaelmunatsi.utils.MyUtility.dimen
 import nl.project.michaelmunatsi.viewModel.NewsViewModel
 
 object Favourite {
@@ -36,7 +28,7 @@ object Favourite {
 //                LazyColumn(modifier = modifier) {
 //                    items(productPaging) { item ->
 //                        if (item != null) {
-//                            NewsArticle.Layout(
+//                            Article.Layout(
 //                                article = item,
 //                                onArticleTitleClick = { onArticleTitleClick.invoke(item.Id) })
 //                        }

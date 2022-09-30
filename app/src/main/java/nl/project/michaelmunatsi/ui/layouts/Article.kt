@@ -18,7 +18,7 @@ import nl.project.michaelmunatsi.utils.MyUtility.formatDate
 import nl.project.michaelmunatsi.viewModel.NewsViewModel
 import nl.project.michaelmunatsi.viewModel.UserViewModel
 
-object NewsArticle {
+object Article {
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun Layout(
@@ -68,10 +68,12 @@ object NewsArticle {
                             )
                             Spacer(modifier = modifier.weight(1f))
                             // like or dislike and article
-                            LikeDisLike.Layout(
+                            LikeDisLikeArticle.Layout(
                                 isChecked = article.IsLiked,
                                 scaffoldState = scaffoldState,
-                                userViewModel = userViewModel
+                                userViewModel = userViewModel,
+                                articleId = article.Id,
+                                newsViewModel = sharedViewModel
                             )
                         }
                     }
@@ -79,7 +81,7 @@ object NewsArticle {
                 // display news summary
                 Column {
                     Text(
-                        text = article.Summary, maxLines = 3
+                        text = article.IsLiked.toString(), maxLines = 3
                     )
                 }
 

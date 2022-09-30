@@ -15,7 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import nl.project.michaelmunatsi.ui.ImageViewer
-import nl.project.michaelmunatsi.ui.layouts.LikeDisLike
+import nl.project.michaelmunatsi.ui.layouts.LikeDisLikeArticle
 import nl.project.michaelmunatsi.ui.theme.Orange
 import nl.project.michaelmunatsi.ui.theme.Transparent
 import nl.project.michaelmunatsi.utils.MyUtility.UrlLinkBuilder
@@ -76,10 +76,12 @@ object Detail {
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = modifier.weight(1f))
-                            LikeDisLike.Layout(
+                            LikeDisLikeArticle.Layout(
                                 isChecked = newsArticle.IsLiked,
                                 scaffoldState = scaffoldState,
-                                userViewModel = sharedUserViewModel
+                                userViewModel = sharedUserViewModel,
+                                newsViewModel = sharedNewsViewModel,
+                                articleId = newsArticle.Id
                             )
                         }
                         for (index in newsArticle.Related.indices) {

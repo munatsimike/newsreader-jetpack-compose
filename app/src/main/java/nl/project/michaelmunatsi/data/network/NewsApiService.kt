@@ -11,9 +11,10 @@ private var myToken: String = ""
 fun updateHeaderToken(token: Token?) {
     myToken = token?.AuthToken ?: ""
 }
+
 interface NewsApiService {
     @GET("Articles")
-    suspend fun getInitArticles(): ApiResponse<MyAPiResponse>
+    suspend fun getInitArticles(@Header("x-authtoken") token: String? = myToken): ApiResponse<MyAPiResponse>
 
     @GET("Articles/{id}")
     suspend fun getMoreArticles(

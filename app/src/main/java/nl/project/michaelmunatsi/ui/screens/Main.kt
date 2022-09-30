@@ -16,7 +16,7 @@ import androidx.paging.compose.items
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import nl.project.michaelmunatsi.R
-import nl.project.michaelmunatsi.ui.layouts.NewsArticle.Layout
+import nl.project.michaelmunatsi.ui.layouts.Article.Layout
 import nl.project.michaelmunatsi.ui.layouts.ProgressBar
 import nl.project.michaelmunatsi.ui.showSnackBar
 import nl.project.michaelmunatsi.utils.MyUtility.resource
@@ -47,7 +47,7 @@ object Main {
             {
                 SwipeRefresh(
                     state = swipeRefreshState,
-                    onRefresh = { articles.refresh() },
+                    onRefresh = { },
                 ) {
                     // display list of article
                     LazyColumn {

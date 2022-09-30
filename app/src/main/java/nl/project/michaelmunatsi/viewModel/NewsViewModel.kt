@@ -1,5 +1,6 @@
 package nl.project.michaelmunatsi.viewModel
 
+import android.provider.SyncStateContract.Helpers.update
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
@@ -7,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import nl.project.michaelmunatsi.data.NewsArticlePager
 import nl.project.michaelmunatsi.data.repository.NewsRepository
 import nl.project.michaelmunatsi.model.Category
@@ -18,38 +20,38 @@ import javax.inject.Inject
 class NewsViewModel @Inject constructor(
     private val newsRepository: NewsRepository,
     private val newsArticleMapper: NewsArticleMapper,
+    private val newsArticlePager: NewsArticlePager
 ) : ViewModel() {
     private val initKey = 0
-
     var selectedArticle: NewsArticle? = null
     val pagingData = Pager(
         config = PagingConfig(pageSize = 20), initialKey = initKey
-    ) { NewsArticlePager(newsRepository, newsArticleMapper) }.flow.cachedIn(viewModelScope)
+    ) { newsArticlePager }.flow.cachedIn(viewModelScope)
 
-    fun getArticle(articleId: Int): Flow<PagingData<NewsArticle>> {
-        return pagingData.map { pagingData ->
+    fun saveClickedArticle(article: NewsArticle) {
+        selectedArticle = article
+    }
+
+    //
+    fun likeDislike(articleId: Int, isLike: Boolean) {
+        viewModelScope.launch {
+            newsRepository.likeDislikeAPi(articleId, isLike)
+        }
+        update(articleId, isLike)
+    }
+
+    fun refreshLikedArticles() {
+        viewModelScope.launch {
+            newsRepository.likedArticles()
+        }
+    }
+
+    private fun update(articleId: Int, isLike: Boolean) {
+        pagingData.map { pagingData ->
             pagingData.filter {
                 it.Id == articleId
             }
         }
     }
 
-    fun saveClickedArticle(article: NewsArticle) {
-        selectedArticle = article
-    }
-
-    private fun article(): NewsArticle {
-        return NewsArticle(
-            134069,
-            listOf(Category(4270, "Sport"), Category(4271, "Wielrennen")),
-            3,
-            "https://media.nu.nl/m/k3zx972ap9ap_sqr256.jpg/van-der-breggen-en-blaak-kondigen-afscheid-aan-als-wielrenster.jpg",
-            false,
-            "2020-05-10T15:14:07",
-            listOf(),
-            "Anna van der Breggen en Chantal Blaak hebben zondag hun afscheid aangekondigd als wielrenster. De wereldtoppers stoppen over respectievelijk anderhalf en twee jaar en gaan daarna verder als ploegleidster.",
-            "Van der Breggen en Blaak kondigen afscheid aan als wielrenster",
-            "https://www.nu.nl/wielrennen/6050336/van-der-breggen-en-blaak-kondigen-afscheid-aan-als-wielrenster.html"
-        )
-    }
 }

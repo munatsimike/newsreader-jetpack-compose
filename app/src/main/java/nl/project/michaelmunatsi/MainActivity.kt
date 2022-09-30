@@ -22,6 +22,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import nl.project.michaelmunatsi.data.network.updateHeaderToken
 import nl.project.michaelmunatsi.model.state.UserState
 import nl.project.michaelmunatsi.ui.DefaultSnackBar
 import nl.project.michaelmunatsi.ui.navigation.BottomNavigationMenu
@@ -49,7 +50,7 @@ class MainActivity : ComponentActivity() {
             val topBarState = rememberSaveable { (mutableStateOf(true)) }
 
             MichaelmunatsiTheme(
-                darkTheme = false
+                darkTheme =false
             ) {
                 val navController = rememberNavController()
                 bottomBarState.value = topBottomBarVisibility(navController = navController)
