@@ -59,12 +59,17 @@ class NewsRepository @Inject constructor() {
     }
 
     // fetch liked articles from api
-    suspend fun likedArticles() {
-        NewsApi.retrofitService.likedArticles().onSuccess {}.onError {
+    suspend fun likedArticles(): MyAPiResponse {
+        NewsApi.retrofitService.likedArticles()
+            .onSuccess {
+                apiResponse = data
+            }
+            .onError {
                 onErrorMessage(statusCode = statusCode.code, message = message())
             }.onFailure {
                 onFailureMessage()
             }
+        return apiResponse
     }
 
     private fun onFailureMessage() {

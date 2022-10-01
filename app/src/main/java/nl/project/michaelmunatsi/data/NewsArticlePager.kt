@@ -9,7 +9,9 @@ import nl.project.michaelmunatsi.model.NewsArticleMapper
 import javax.inject.Inject
 
 class NewsArticlePager @Inject constructor(
-    private val newsRepo: NewsRepository, private val newsMapper: NewsArticleMapper
+    private val newsRepo: NewsRepository,
+    private val newsMapper: NewsArticleMapper,
+    private val isLikedArticle: Boolean
 ) : PagingSource<Int, NewsArticle>() {
 
     private var nextId: Int? = null
@@ -36,14 +38,19 @@ class NewsArticlePager @Inject constructor(
     private suspend fun fetch(key: Int?): List<NewsArticle> {
         val response: Result<List<NewsArticle>>
         val result: MyAPiResponse
-        if (key == 0) {
-            result = newsRepo.fetchFirstArticleBatch()
-            response = newsMapper.mapList(result.Results)
+        if (!isLikedArticle) {
+            if (key == 0) {
+                result = newsRepo.fetchFirstArticleBatch()
+                response = newsMapper.mapList(result.Results)
+            } else {
+                result = nextId?.let { newsRepo.getMoreArticles(it) }!!
+                response = newsMapper.mapList(result.Results)
+            }
+            nextId = result.NextId
         } else {
-            result = nextId?.let { newsRepo.getMoreArticles(it) }!!
+            result = newsRepo.likedArticles()
             response = newsMapper.mapList(result.Results)
         }
-        nextId = result.NextId
         return getMapperResult(response)
     }
 

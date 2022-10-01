@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import nl.project.michaelmunatsi.model.NewsArticle
 import nl.project.michaelmunatsi.utils.MyUtility.formatDate
 import nl.project.michaelmunatsi.viewModel.NewsViewModel
 import nl.project.michaelmunatsi.viewModel.UserViewModel
@@ -26,7 +27,7 @@ object Article {
         scaffoldState: ScaffoldState,
         userViewModel: UserViewModel,
         sharedViewModel: NewsViewModel,
-        article: nl.project.michaelmunatsi.model.NewsArticle,
+        article: NewsArticle,
         onArticleTitleClick: () -> Unit
     ) {
         Card(
@@ -81,10 +82,9 @@ object Article {
                 // display news summary
                 Column {
                     Text(
-                        text = article.IsLiked.toString(), maxLines = 3
+                        text = article.Summary, maxLines = 3
                     )
                 }
-
             }
         }
     }

@@ -11,7 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import nl.project.michaelmunatsi.R
-import nl.project.michaelmunatsi.model.NewsArticle
 import nl.project.michaelmunatsi.model.state.UserState
 import nl.project.michaelmunatsi.ui.showSnackBar
 import nl.project.michaelmunatsi.ui.theme.Orange
@@ -30,7 +29,7 @@ object LikeDisLikeArticle {
         newsViewModel: NewsViewModel,
         articleId: Int
     ) {
-        var checked by remember { mutableStateOf(isChecked) }
+        val checked by remember { mutableStateOf(isChecked) }
         val userState by userViewModel.userState.collectAsState()
         val scope = rememberCoroutineScope()
         IconToggleButton(
@@ -38,7 +37,6 @@ object LikeDisLikeArticle {
             onCheckedChange = {
                 if (userState == UserState.LoggedIn) {
                     newsViewModel.likeDislike(articleId, !checked)
-                    checked = !checked
                 } else {
                     showSnackBar(
                         message = resource.getString(R.string.user_not_logged_in),
@@ -52,7 +50,6 @@ object LikeDisLikeArticle {
                 imageVector = if (checked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                 contentDescription = "Icon",
                 tint = if (checked) Orange else Orange,
-
                 modifier = modifier.size(35.dp)
             )
         }

@@ -37,9 +37,9 @@ fun NewsAppNavGraph(
         }
 
         composable(route = NavigationDestination.Favourite.screen_route) {
-            Favourite.Screen(onArticleTitleClick = { articleId ->
+            Favourite.Screen(onTitleClick = { articleId ->
                 navController.navigate(NavigationDestination.Detail.screen_route + "/$articleId")
-            })
+            }, scaffoldState =scaffoldState, sharedNewsViewModel = sharedViewModel, sharedUserViewModel = sharedUserViewModel)
         }
 
         composable(
