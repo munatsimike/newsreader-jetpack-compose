@@ -1,4 +1,4 @@
-package nl.project.michaelmunatsi.hilt
+package nl.project.michaelmunatsi
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

@@ -49,11 +49,12 @@ class MainActivity : ComponentActivity() {
             val topBarState = rememberSaveable { (mutableStateOf(true)) }
 
             MichaelmunatsiTheme(
-                darkTheme =false
+                darkTheme = true
             ) {
                 val navController = rememberNavController()
                 // is user navigating to the detail screen
-                bottomBarState.value = onDestinationChange(navController = navController,NavigationDestination.Detail)
+                bottomBarState.value =
+                    onDestinationChange(navController = navController, NavigationDestination.Detail)
                 topBarState.value = bottomBarState.value
 
                 val modalBottomSheetState =
@@ -85,7 +86,8 @@ class MainActivity : ComponentActivity() {
         sharedNewsViewModel: NewsViewModel = hiltViewModel()
     ) {
         // is user navigating to the favourite screen
-        sharedNewsViewModel.isFavouriteScreen = !onDestinationChange(navController = navController,NavigationDestination.Favourite)
+        sharedNewsViewModel.isFavouriteScreen =
+            !onDestinationChange(navController = navController, NavigationDestination.Favourite)
 
         LaunchedEffect(Unit) {
             sharedUserViewModel.authToken.collectLatest {
@@ -108,36 +110,41 @@ class MainActivity : ComponentActivity() {
             sheetShape = RoundedCornerShape(topStart = dimen.dp_16, topEnd = dimen.dp_16),
             sheetBackgroundColor = Color.White,
         ) {
-            Surface(
-                modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background
-            ) {
-                Scaffold(topBar = {
-                    NewsReaderToolBar(
-                        topBarState, modalBottomSheetState
+            Scaffold(topBar = {
+                NewsReaderToolBar(
+                    topBarState, modalBottomSheetState
+                )
+            }, bottomBar = {
+                BottomNavigationMenu(
+                    navController, bottomBarState, scaffoldState, sharedUserViewModel
+                )
+            }, scaffoldState = scaffoldState, snackbarHost = {
+                scaffoldState.snackbarHostState
+            }) { innerPadding ->
+                Box(modifier = modifier.padding(innerPadding)) {
+                    NewsAppNavGraph(
+                        navController,
+                        scaffoldState,
+                        sharedUserViewModel,
+                        sharedNewsViewModel
                     )
-                }, bottomBar = {
-                    BottomNavigationMenu(
-                        navController, bottomBarState,scaffoldState,sharedUserViewModel
+                    DefaultSnackBar(
+                        snackbarHostState = scaffoldState.snackbarHostState, onAction = {
+                            scaffoldState.snackbarHostState.currentSnackbarData?.performAction()
+                        }, modifier = modifier.align(Alignment.BottomCenter)
                     )
-                }, scaffoldState = scaffoldState, snackbarHost = {
-                    scaffoldState.snackbarHostState
-                }) { innerPadding ->
-                    Box(modifier = modifier.padding(innerPadding)) {
-                        NewsAppNavGraph(navController, scaffoldState, sharedUserViewModel, sharedNewsViewModel)
-                        DefaultSnackBar(
-                            snackbarHostState = scaffoldState.snackbarHostState, onAction = {
-                                scaffoldState.snackbarHostState.currentSnackbarData?.performAction()
-                            }, modifier = modifier.align(Alignment.BottomCenter)
-                        )
-                    }
                 }
             }
         }
     }
 }
 
+
 @Composable
-fun onDestinationChange(navController: NavHostController, destination: NavigationDestination): Boolean {
+fun onDestinationChange(
+    navController: NavHostController,
+    destination: NavigationDestination
+): Boolean {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     return navBackStackEntry?.destination?.route?.let { destinationFromUrl(it) } != destination.screen_route
 }

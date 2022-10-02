@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -28,7 +29,7 @@ object Article {
         userViewModel: UserViewModel,
         sharedViewModel: NewsViewModel,
         article: NewsArticle,
-        onArticleTitleClick: () -> Unit
+        onArticleTitleClick: () -> Unit,
     ) {
         Card(
             modifier = modifier
@@ -73,9 +74,8 @@ object Article {
                                 isChecked = article.IsLiked,
                                 scaffoldState = scaffoldState,
                                 userViewModel = userViewModel,
-                                articleId = article.Id,
-                                newsViewModel = sharedViewModel
-                            )
+                               ) {sharedViewModel.likeDislike(article.Id, !article.IsLiked) }
+
                         }
                     }
                 }

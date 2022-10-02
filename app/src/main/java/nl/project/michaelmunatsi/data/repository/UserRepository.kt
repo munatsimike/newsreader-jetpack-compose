@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import nl.project.michaelmunatsi.R
-import nl.project.michaelmunatsi.data.network.UserApi
+import nl.project.michaelmunatsi.data.remote.UserApi
 import nl.project.michaelmunatsi.model.Token
 import nl.project.michaelmunatsi.model.User
 import nl.project.michaelmunatsi.utils.Coroutines

@@ -15,7 +15,6 @@ import nl.project.michaelmunatsi.model.state.UserState
 import nl.project.michaelmunatsi.ui.showSnackBar
 import nl.project.michaelmunatsi.ui.theme.Orange
 import nl.project.michaelmunatsi.utils.MyUtility.resource
-import nl.project.michaelmunatsi.viewModel.NewsViewModel
 import nl.project.michaelmunatsi.viewModel.UserViewModel
 
 object LikeDisLikeArticle {
@@ -26,17 +25,18 @@ object LikeDisLikeArticle {
         isChecked: Boolean,
         scaffoldState: ScaffoldState,
         userViewModel: UserViewModel,
-        newsViewModel: NewsViewModel,
-        articleId: Int
+        onLikeDislike: ()->Unit,
+
     ) {
-        val checked by remember { mutableStateOf(isChecked) }
+        var checked by remember { mutableStateOf(isChecked) }
         val userState by userViewModel.userState.collectAsState()
         val scope = rememberCoroutineScope()
         IconToggleButton(
             checked = checked,
             onCheckedChange = {
                 if (userState == UserState.LoggedIn) {
-                    newsViewModel.likeDislike(articleId, !checked)
+                   onLikeDislike.invoke()
+                    checked = !checked
                 } else {
                     showSnackBar(
                         message = resource.getString(R.string.user_not_logged_in),

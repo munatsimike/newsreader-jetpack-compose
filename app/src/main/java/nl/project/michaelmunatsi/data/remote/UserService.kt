@@ -1,4 +1,4 @@
-package nl.project.michaelmunatsi.data.network
+package nl.project.michaelmunatsi.data.remote
 
 import com.skydoves.sandwich.ApiResponse
 import nl.project.michaelmunatsi.model.Token

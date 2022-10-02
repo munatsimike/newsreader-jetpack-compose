@@ -1,4 +1,4 @@
-package nl.project.michaelmunatsi.data.network
+package nl.project.michaelmunatsi.data.remote
 
 import com.skydoves.sandwich.adapters.ApiResponseCallAdapterFactory
 import com.squareup.moshi.Moshi
@@ -8,11 +8,17 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.concurrent.TimeUnit
 
 const val BASE_URL = "https://inhollandbackend.azurewebsites.net/api/"
 
 private val moshi = Moshi.Builder() // adapter
     .add(KotlinJsonAdapterFactory())
+    .build()
+
+private var provideHttpClient: OkHttpClient = OkHttpClient.Builder()
+    .readTimeout(15, TimeUnit.SECONDS)
+    .connectTimeout(15, TimeUnit.SECONDS)
     .build()
 
 private var logger: OkHttpClient =

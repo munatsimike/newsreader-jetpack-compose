@@ -80,9 +80,13 @@ object Detail {
                                 isChecked = newsArticle.IsLiked,
                                 scaffoldState = scaffoldState,
                                 userViewModel = sharedUserViewModel,
-                                newsViewModel = sharedNewsViewModel,
-                                articleId = newsArticle.Id
-                            )
+
+                                ) {
+                                sharedNewsViewModel.likeDislike(
+                                    articleId = newsArticle.Id,
+                                    !newsArticle.IsLiked
+                                )
+                            }
                         }
                         for (index in newsArticle.Related.indices) {
                             UrlLinkBuilder(

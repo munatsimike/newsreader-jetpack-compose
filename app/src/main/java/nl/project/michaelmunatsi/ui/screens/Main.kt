@@ -18,7 +18,7 @@ object Main : BaseScreen() {
         scaffoldState: ScaffoldState,
         onTitleClick: (id: Int) -> Unit = {}
     ) {
-        val articles = sharedNewsViewModel.articlePagingData.collectAsLazyPagingItems()
+        val articles = sharedNewsViewModel.getAllArticles.collectAsLazyPagingItems()
 
         DisplayArticles(
                 articles, sharedNewsViewModel, sharedUserViewModel, scaffoldState, onTitleClick

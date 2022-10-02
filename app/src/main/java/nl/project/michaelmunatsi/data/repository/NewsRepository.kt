@@ -1,75 +1,85 @@
 package nl.project.michaelmunatsi.data.repository
 
-import com.skydoves.sandwich.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.skydoves.sandwich.message
+import com.skydoves.sandwich.onError
+import com.skydoves.sandwich.onFailure
+import kotlinx.coroutines.flow.Flow
 import nl.project.michaelmunatsi.R
-import nl.project.michaelmunatsi.data.network.NewsApi
-import nl.project.michaelmunatsi.model.MyAPiResponse
+import nl.project.michaelmunatsi.data.database.ArticleDB
+import nl.project.michaelmunatsi.data.paging.ArticleRemoteMediator
+import nl.project.michaelmunatsi.data.paging.LikedArticlePager
+import nl.project.michaelmunatsi.data.remote.NewsApi
+import nl.project.michaelmunatsi.model.NewsArticle
+import nl.project.michaelmunatsi.model.NewsArticleMapper
 import nl.project.michaelmunatsi.utils.MyUtility.resource
+import nl.project.michaelmunatsi.utils.MyUtility.toInt
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NewsRepository @Inject constructor() {
-    private var apiResponse = MyAPiResponse(0, emptyList())
+class NewsRepository @Inject constructor(
+    private val database: ArticleDB,
+    private val newsMapper: NewsArticleMapper
+) {
 
-    suspend fun fetchFirstArticleBatch(): MyAPiResponse {
-        NewsApi.retrofitService.getInitArticles()
-            .onSuccess {
-                apiResponse = data
-            }.onFailure {
-                onFailureMessage()
-            }.onError {
-                onErrorMessage(statusCode = statusCode.code, message = message())
-            }
-        return apiResponse
-    }
-
-    // get more articles  after initial batch
-    suspend fun getMoreArticles(nextId: Int, numOfArticles: Int = 20): MyAPiResponse {
-        NewsApi.retrofitService.getMoreArticles(nextId, numOfArticles)
-            .onSuccess {
-                apiResponse = data
-            }.onFailure {
-                onFailureMessage()
-            }.onError {
-                onErrorMessage(statusCode = statusCode.code, message = message())
-            }
-        return apiResponse
+    @OptIn(ExperimentalPagingApi::class)
+    fun getAllArticles(): Flow<PagingData<NewsArticle>> {
+        val pagingSourceFactory = { database.newsDao.getAllArticles() }
+        return Pager(
+            config = PagingConfig(pageSize = 20),
+            remoteMediator = ArticleRemoteMediator(
+                dataBase = database,
+                newsMapper
+            ), pagingSourceFactory = pagingSourceFactory
+        ).flow
     }
 
     // like dislike remote api
     suspend fun likeDislikeAPi(articleId: Int, isLike: Boolean) {
         if (isLike) {
             // like article
-            NewsApi.retrofitService.likeArticle(articleId)
-                .onError {
-                    onErrorMessage(statusCode = statusCode.code, message = message())
-                }.onFailure {
-                    onFailureMessage()
-                }
-        } else {
-            // dislike article
-            NewsApi.retrofitService.disLikeArticle(articleId)
-                .onError {
-                    onErrorMessage(statusCode = statusCode.code, message = message())
-                }.onFailure {
-                    onFailureMessage()
-                }
-        }
-    }
-
-    // fetch liked articles from api
-    suspend fun likedArticles(): MyAPiResponse {
-        NewsApi.retrofitService.likedArticles()
-            .onSuccess {
-                apiResponse = data
-            }
-            .onError {
+            NewsApi.retrofitService.likeArticle(articleId).onError {
                 onErrorMessage(statusCode = statusCode.code, message = message())
             }.onFailure {
                 onFailureMessage()
             }
-        return apiResponse
+        } else {
+            // dislike article
+            NewsApi.retrofitService.disLikeArticle(articleId).onError {
+                onErrorMessage(statusCode = statusCode.code, message = message())
+            }.onFailure {
+                onFailureMessage()
+            }
+        }
+        likeDislikeRoomDB(isLike, articleId)
+    }
+
+    // fetch liked articles from api
+    fun likedArticles(): Flow<PagingData<NewsArticle>> {
+        return Pager(
+            config = PagingConfig(pageSize = 10),
+            pagingSourceFactory = {
+                LikedArticlePager(newsMapper)
+            }
+        ).flow
+    }
+
+    // like dislike article in local database
+    private suspend fun likeDislikeRoomDB(isLike: Boolean, id: Int) {
+        if (isLike) {
+            // like article
+            database.newsDao.likeDislike(isLike.toInt(), id)
+        } else {
+            // dislike article
+            database.newsDao.likeDislike(isLike.toInt(), id)
+        }
+
     }
 
     private fun onFailureMessage() {

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import nl.project.michaelmunatsi.R
-import nl.project.michaelmunatsi.data.network.updateHeaderToken
+import nl.project.michaelmunatsi.data.remote.updateHeaderToken
 import nl.project.michaelmunatsi.data.repository.UserRepository
 import nl.project.michaelmunatsi.model.Token
 import nl.project.michaelmunatsi.model.User
@@ -42,7 +42,7 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
     }
 
     // update token that will be used  to fetch articles
-    fun updateHeaderToken(){
+    private fun updateHeaderToken() {
         viewModelScope.launch {
             authToken.collectLatest {
                 updateHeaderToken(it)

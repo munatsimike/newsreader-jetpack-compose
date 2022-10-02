@@ -1,4 +1,4 @@
-package nl.project.michaelmunatsi.data.network
+package nl.project.michaelmunatsi.data.remote
 
 import com.skydoves.sandwich.ApiResponse
 import nl.project.michaelmunatsi.model.MyAPiResponse
@@ -14,16 +14,16 @@ fun updateHeaderToken(token: Token?) {
 
 interface NewsApiService {
     @GET("Articles")
-    suspend fun getInitArticles(@Header("x-authtoken") token: String? = myToken): ApiResponse<MyAPiResponse>
+    suspend fun getInitArticles(@Header("x-authtoken") token: String? = myToken): MyAPiResponse
 
     @GET("Articles/{id}")
     suspend fun getMoreArticles(
         @Path("id") nextId: Int,
-        @Query("count") count: Int,
-    ): ApiResponse<MyAPiResponse>
+        @Query("count") count: Int=50,
+    ): MyAPiResponse
 
     @GET("Articles/liked")
-    suspend fun likedArticles(@Header("x-authtoken") token: String? = myToken): ApiResponse<MyAPiResponse>
+    suspend fun likedArticles(@Header("x-authtoken") token: String? = myToken): MyAPiResponse
 
     @PUT("Articles/{id}/like")
     suspend fun likeArticle(
