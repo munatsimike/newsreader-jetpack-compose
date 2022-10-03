@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.utils.MyUtility.dimen
 import nl.project.michaelmunatsi.viewModel.UserViewModel
@@ -17,7 +16,6 @@ object Logout {
     fun Screen(
         sharedUserViewModel: UserViewModel,
         modifier: Modifier = Modifier,
-
         ) {
         Box(
             modifier = modifier

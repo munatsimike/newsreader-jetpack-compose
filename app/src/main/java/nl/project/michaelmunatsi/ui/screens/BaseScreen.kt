@@ -2,12 +2,15 @@ package nl.project.michaelmunatsi.ui.screens
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
@@ -39,55 +42,59 @@ abstract class BaseScreen {
         val swipeRefreshState = rememberSwipeRefreshState(false)
         val scrollState = rememberLazyListState()
         saveListPosition(scrollState, sharedNewsViewModel)
-        SwipeRefresh(
-            state = swipeRefreshState,
-            onRefresh = {},
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            // display list of article
-            LazyColumn(
-                state = scrollState
+            SwipeRefresh(
+                state = swipeRefreshState,
+                onRefresh = {articles.refresh()},
             ) {
-                returnToPreviousListPosition(scrollState, scope, sharedNewsViewModel)
-                items(articles) { item ->
-                    if (item != null) {
-                        Article.Layout(
-                            article = item,
-                            onArticleTitleClick = { onTitleClick.invoke(item.Id) },
-                            scaffoldState = scaffoldState,
-                            userViewModel = sharedUserViewModel,
-                            sharedViewModel = sharedNewsViewModel,
-                        )
+                // display list of article
+                LazyColumn(
+                    state = scrollState
+                ) {
+                    returnToPreviousListPosition(scrollState, scope, sharedNewsViewModel)
+                    items(articles) { item ->
+                        if (item != null) {
+                            Article.Layout(
+                                article = item,
+                                onArticleTitleClick = { onTitleClick.invoke(item.Id) },
+                                scaffoldState = scaffoldState,
+                                userViewModel = sharedUserViewModel,
+                                sharedViewModel = sharedNewsViewModel,
+                            )
+                        }
                     }
-                }
 
-                when (articles.loadState.append) {
-                    is LoadState.Error -> {
-                        showSnackBar(
-                            message = (articles.loadState.append as LoadState.Error).error.message.toString(),
-                            coroutineScope = scope,
-                            scaffoldState = scaffoldState,
-                            actionLabel = MyUtility.resource.getString(R.string.retry)
-                        ) { articles.retry() }
+                    when (articles.loadState.append) {
+                        is LoadState.Error -> {
+                            showSnackBar(
+                                message = (articles.loadState.append as LoadState.Error).error.message.toString(),
+                                coroutineScope = scope,
+                                scaffoldState = scaffoldState,
+                                actionLabel = MyUtility.resource.getString(R.string.retry)
+                            ) { articles.retry() }
+                        }
+                        LoadState.Loading -> {
+                            item { ProgressBar.Show() }
+                        }
+                        is LoadState.NotLoading -> {}
                     }
-                    LoadState.Loading -> {
-                        item { ProgressBar.Show() }
-                    }
-                    is LoadState.NotLoading -> {}
-                }
 
-                when (articles.loadState.refresh) {
-                    is LoadState.Error -> {
-                        showSnackBar(
-                            message = (articles.loadState.refresh as LoadState.Error).error.message.toString(),
-                            coroutineScope = scope,
-                            scaffoldState = scaffoldState,
-                            actionLabel = MyUtility.resource.getString(R.string.retry)
-                        ) { articles.retry() }
+                    when (articles.loadState.refresh) {
+                        is LoadState.Error -> {
+                            showSnackBar(
+                                message = (articles.loadState.refresh as LoadState.Error).error.message.toString(),
+                                coroutineScope = scope,
+                                scaffoldState = scaffoldState,
+                                actionLabel = MyUtility.resource.getString(R.string.retry)
+                            ) { articles.retry() }
+                        }
+                        LoadState.Loading -> {
+                            item { ProgressBar.Show() }
+                        }
+                        is LoadState.NotLoading -> {}
                     }
-                    LoadState.Loading -> {
-                        item { ProgressBar.Show() }
-                    }
-                    is LoadState.NotLoading -> {}
                 }
             }
         }

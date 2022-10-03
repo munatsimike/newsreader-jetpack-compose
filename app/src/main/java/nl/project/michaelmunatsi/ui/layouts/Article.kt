@@ -4,10 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -47,7 +44,7 @@ object Article {
 
                     Spacer(modifier = modifier.width(15.dp))
                     // display article title
-                    Column() {
+                    Column {
                         TextButton(
                             onClick = {
                                 sharedViewModel.saveClickedArticle(article)
@@ -55,9 +52,8 @@ object Article {
                             }
                         ) {
                             Text(
-
                                 text = article.Title,
-                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.subtitle1,
                                 color = Color.Blue
                             )
                         }
@@ -82,7 +78,8 @@ object Article {
                 // display news summary
                 Column {
                     Text(
-                        text = article.Summary, maxLines = 3
+                        text = article.Summary, maxLines = 3,
+                        style = MaterialTheme.typography.body1
                     )
                 }
             }

@@ -14,12 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.ui.ImageViewer
 import nl.project.michaelmunatsi.ui.layouts.LikeDisLikeArticle
-import nl.project.michaelmunatsi.ui.theme.Orange
 import nl.project.michaelmunatsi.ui.theme.Transparent
 import nl.project.michaelmunatsi.utils.MyUtility.UrlLinkBuilder
 import nl.project.michaelmunatsi.utils.MyUtility.dimen
+import nl.project.michaelmunatsi.utils.MyUtility.resource
 import nl.project.michaelmunatsi.viewModel.NewsViewModel
 import nl.project.michaelmunatsi.viewModel.UserViewModel
 
@@ -34,7 +35,6 @@ object Detail {
         sharedUserViewModel: UserViewModel
     ) {
         val newsArticle = sharedNewsViewModel.selectedArticle
-
         if (newsArticle != null && newsArticle.Id == articleId) {
             Surface(
                 modifier = modifier.fillMaxHeight()
@@ -57,8 +57,8 @@ object Detail {
                                 Icon(
                                     modifier = modifier.size(dimen.dp_40),
                                     imageVector = Icons.Default.ArrowBack,
-                                    tint = Orange,
-                                    contentDescription = "Back button",
+                                    tint = MaterialTheme.colors.secondary,
+                                    contentDescription = resource.getString(R.string.back_button),
                                 )
                             }
                         }
@@ -71,7 +71,7 @@ object Detail {
                             verticalAlignment = Alignment.Bottom
                         ) {
                             if (newsArticle.Related.isNotEmpty()) Text(
-                                text = "Related",
+                                text = resource.getString(R.string.related),
                                 fontSize = dimen.sp_20,
                                 fontWeight = FontWeight.Bold
                             )

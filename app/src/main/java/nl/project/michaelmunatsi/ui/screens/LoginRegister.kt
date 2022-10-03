@@ -18,7 +18,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.model.User
 import nl.project.michaelmunatsi.model.state.FormState
-import nl.project.michaelmunatsi.ui.theme.Purple500
+import nl.project.michaelmunatsi.ui.theme.Purple00
 import nl.project.michaelmunatsi.utils.MyUtility.dimen
 import nl.project.michaelmunatsi.utils.MyUtility.resource
 import nl.project.michaelmunatsi.viewModel.UserViewModel
@@ -31,7 +31,7 @@ object LoginRegister {
     private lateinit var selectedOption: MutableState<String>
 
     @Composable
-    fun Screen(sharedUserViewModel: UserViewModel,modifier: Modifier = Modifier) {
+    fun Screen(sharedUserViewModel: UserViewModel, modifier: Modifier = Modifier) {
         selectedOption = remember { mutableStateOf(resource.getString(R.string.login)) }
         val onSelectionChange = { text: String ->
             selectedOption.value = text
@@ -55,6 +55,7 @@ object LoginRegister {
                         .fillMaxWidth()
                         .fillMaxHeight(0.14f)
                         .fillMaxHeight()
+                        .background(Purple00)
                 ) {
                     var length = 0.5f
                     options.forEach { text ->
@@ -69,16 +70,12 @@ object LoginRegister {
                                 sharedUserViewModel.onFormEvent(FormState.ToggleForm)
                             }
                             .background(
-                                if (stringResource(id = text) == selectedOption.value) {
-                                    Purple500
-                                } else {
-                                    Color.Gray
-                                }
+                                getMenuBackgroundColor(selected = stringResource(id = text) == selectedOption.value)
                             ), contentAlignment = Center) {
                             Text(
                                 text = stringResource(id = text),
                                 fontSize = dimen.sp_20,
-                                color = Color.White,
+                                color = getMenuTextColor(stringResource(id = text) == selectedOption.value),
                                 modifier = modifier
                             )
                         }
@@ -107,7 +104,10 @@ object LoginRegister {
             R.drawable.ic_baseline_visibility_off_24
         }
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier =Modifier.background(MaterialTheme.colors.surface),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
                 modifier = modifier.padding(dimen.dp_15),
                 text = successErrorMessageLabel.value,
@@ -134,7 +134,6 @@ object LoginRegister {
                                 id = R.string.password_icon
                             )
                         )
-
                     }
                 },
                 keyboardOptions = KeyboardOptions(
@@ -144,7 +143,8 @@ object LoginRegister {
             )
             Spacer(modifier = Modifier.height(dimen.dp_15))
             Row(
-                modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
+                modifier = modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.Center
             ) {
                 Button(
                     onClick = {
@@ -172,7 +172,7 @@ object LoginRegister {
             is FormState.Success -> {
                 clearFromFields()
                 selectedOption.value = resource.getString(R.string.login)
-                labelTextColor.value = Color.Green
+                labelTextColor.value = MaterialTheme.colors.onPrimary
                 successErrorMessageLabel.value = (state as FormState.Success).message
             }
             else -> {}
@@ -183,5 +183,21 @@ object LoginRegister {
         if (successErrorMessageLabel.value.isNotEmpty()) successErrorMessageLabel.value = ""
         if (password.value.isNotEmpty()) password.value = ""
         if (username.value.isNotEmpty()) username.value = ""
+    }
+
+    @Composable
+    private fun getMenuBackgroundColor(selected: Boolean): Color {
+        if (selected) {
+            return MaterialTheme.colors.primary
+        }
+        return MaterialTheme.colors.surface
+    }
+
+    @Composable
+    private fun getMenuTextColor(selected: Boolean): Color {
+        if (selected) {
+            return MaterialTheme.colors.onPrimary
+        }
+        return MaterialTheme.colors.onSurface
     }
 }

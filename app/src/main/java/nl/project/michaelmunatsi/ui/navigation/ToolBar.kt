@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import kotlinx.coroutines.launch
@@ -43,7 +44,7 @@ fun NewsReaderToolBar(
                         }
                     }
                 ) {
-                    Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "")
+                    Icon(imageVector = Icons.Filled.AccountCircle, "", tint = Color.White)
                 }
             })
         })

@@ -3,6 +3,7 @@ package nl.project.michaelmunatsi.ui.layouts
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.IconToggleButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -13,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.model.state.UserState
 import nl.project.michaelmunatsi.ui.showSnackBar
-import nl.project.michaelmunatsi.ui.theme.Orange
 import nl.project.michaelmunatsi.utils.MyUtility.resource
 import nl.project.michaelmunatsi.viewModel.UserViewModel
 
@@ -49,7 +49,7 @@ object LikeDisLikeArticle {
             Icon(
                 imageVector = if (checked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                 contentDescription = "Icon",
-                tint = if (checked) Orange else Orange,
+                tint = if (checked) MaterialTheme.colors.secondary else MaterialTheme.colors.secondary,
                 modifier = modifier.size(35.dp)
             )
         }

@@ -1,7 +1,5 @@
 package nl.project.michaelmunatsi.data.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -63,7 +61,7 @@ class NewsRepository @Inject constructor(
     // fetch liked articles from api
     fun likedArticles(): Flow<PagingData<NewsArticle>> {
         return Pager(
-            config = PagingConfig(pageSize = 10),
+            config = PagingConfig(pageSize =10),
             pagingSourceFactory = {
                 LikedArticlePager(newsMapper)
             }

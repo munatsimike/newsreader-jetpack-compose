@@ -25,7 +25,7 @@ class LikedArticlePager @Inject constructor(
             val data = fetch()
             LoadResult.Page(
                 data = data,
-                prevKey = if (currentPage == 1) null else currentPage - 1,
+                prevKey = null,
                 nextKey = if (nextId == 0) null else currentPage + 1
             )
         } catch (e: Exception) {

@@ -37,7 +37,8 @@ class NewsViewModel @Inject constructor(
     private fun getArticles() {
         viewModelScope.launch {
             newsRepository.likedArticles().cachedIn(viewModelScope).collect {
-                _likedArticles.value = it
+                _likedArticles.emit(it)
+
             }
         }
     }

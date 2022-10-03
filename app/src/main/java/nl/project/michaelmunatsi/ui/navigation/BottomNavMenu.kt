@@ -9,11 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import kotlinx.coroutines.launch
 import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.model.state.UserState
 import nl.project.michaelmunatsi.ui.showSnackBar
-import nl.project.michaelmunatsi.utils.MyUtility
 import nl.project.michaelmunatsi.utils.MyUtility.resource
 import nl.project.michaelmunatsi.viewModel.UserViewModel
 
@@ -29,7 +27,7 @@ fun BottomNavigationMenu(
     val items: List<NavigationDestination> = listOf(
         NavigationDestination.Home, NavigationDestination.Favourite
     )
-    val selectedItemColor: Color = Color.Red
+    val selectedItemColor: Color = MaterialTheme.colors.secondary
     val unselectedIItemColor: Color = Color.White
 
     val userState by userViewModel.userState.collectAsState()

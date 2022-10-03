@@ -10,6 +10,8 @@
     <string name="password">Password</string>
     <string name="favourite_icon">Favourite icon</string>
     <string name="welcome">Welcome</string>
+    <string name="related">Related</string>
+    <string name="back_button">Back button</string>
     <string name="password_icon">Password icon</string>
     <string name="logout">Logout</string>
     <string name="valid">Valid</string>

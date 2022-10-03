@@ -6,10 +6,10 @@ import nl.project.michaelmunatsi.model.Token
 import okhttp3.ResponseBody
 import retrofit2.http.*
 
-private var myToken: String = ""
+private var myToken: String? = null
 
 fun updateHeaderToken(token: Token?) {
-    myToken = token?.AuthToken ?: ""
+    myToken = token?.AuthToken
 }
 
 interface NewsApiService {
