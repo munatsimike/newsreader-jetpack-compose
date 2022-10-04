@@ -47,7 +47,7 @@ abstract class BaseScreen {
         ) {
             SwipeRefresh(
                 state = swipeRefreshState,
-                onRefresh = {articles.refresh()},
+                onRefresh = { articles.refresh() },
             ) {
                 // display list of article
                 LazyColumn(
@@ -65,35 +65,38 @@ abstract class BaseScreen {
                             )
                         }
                     }
+                    item {
+                        when (articles.loadState.append) {
+                            is LoadState.Error -> {
+                                showSnackBar(
+                                    message = (articles.loadState.append as LoadState.Error).error.message.toString(),
+                                    coroutineScope = scope,
+                                    scaffoldState = scaffoldState,
+                                    actionLabel = MyUtility.resource.getString(R.string.retry)
+                                ) { articles.retry() }
+                            }
+                            LoadState.Loading -> {
+                                ProgressBar.Show()
+                            }
+                            is LoadState.NotLoading -> {}
+                        }
 
-                    when (articles.loadState.append) {
-                        is LoadState.Error -> {
-                            showSnackBar(
-                                message = (articles.loadState.append as LoadState.Error).error.message.toString(),
-                                coroutineScope = scope,
-                                scaffoldState = scaffoldState,
-                                actionLabel = MyUtility.resource.getString(R.string.retry)
-                            ) { articles.retry() }
+                        when (articles.loadState.refresh) {
+                            is LoadState.Error -> {
+                                val errorMessage =
+                                    (articles.loadState.refresh as LoadState.Error).error.message.toString()
+                                showSnackBar(
+                                    message = errorMessage,
+                                    coroutineScope = scope,
+                                    scaffoldState = scaffoldState,
+                                    actionLabel = MyUtility.resource.getString(R.string.retry)
+                                ) { articles.retry() }
+                            }
+                            LoadState.Loading -> {
+                                ProgressBar.Show()
+                            }
+                            is LoadState.NotLoading -> {}
                         }
-                        LoadState.Loading -> {
-                            item { ProgressBar.Show() }
-                        }
-                        is LoadState.NotLoading -> {}
-                    }
-
-                    when (articles.loadState.refresh) {
-                        is LoadState.Error -> {
-                            showSnackBar(
-                                message = (articles.loadState.refresh as LoadState.Error).error.message.toString(),
-                                coroutineScope = scope,
-                                scaffoldState = scaffoldState,
-                                actionLabel = MyUtility.resource.getString(R.string.retry)
-                            ) { articles.retry() }
-                        }
-                        LoadState.Loading -> {
-                            item { ProgressBar.Show() }
-                        }
-                        is LoadState.NotLoading -> {}
                     }
                 }
             }

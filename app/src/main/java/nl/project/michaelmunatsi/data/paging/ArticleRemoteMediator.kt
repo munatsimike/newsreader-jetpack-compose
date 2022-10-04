@@ -8,6 +8,7 @@ import androidx.room.withTransaction
 import nl.project.michaelmunatsi.data.database.ArticleDB
 import nl.project.michaelmunatsi.data.remote.NewsApi
 import nl.project.michaelmunatsi.model.*
+import timber.log.Timber
 
 @OptIn(ExperimentalPagingApi::class)
 class ArticleRemoteMediator(
@@ -18,7 +19,7 @@ class ArticleRemoteMediator(
     private val articleDao = dataBase.newsDao
     private val remoteKeysDao = dataBase.RemoteKeysDao
     private var articles: List<NewsArticleEntity> = emptyList()
-    private var nextId: Int? = null
+    private var nextId: Int = 0
 
     @ExperimentalPagingApi
     override suspend fun load(
@@ -45,7 +46,7 @@ class ArticleRemoteMediator(
                     nextPage
                 }
             }
-            articles = if (nextId == null) {
+            articles = if (state.isEmpty()) {
                 getArticles(NewsApi.retrofitService.getInitArticles())
             } else {
                 getArticles(NewsApi.retrofitService.getMoreArticles(nextId!!))
@@ -53,7 +54,7 @@ class ArticleRemoteMediator(
 
             val articles: List<NewsArticle> = getMapperResult(newsArticleMapper.mapList(articles))
 
-            val endOfPaginationReached = articles.isEmpty()
+            val endOfPaginationReached = (nextId==0)
 
             val prevPage = if (currentPage == 1) null else currentPage - 1
             val nextPage = if (endOfPaginationReached) null else currentPage + 1
@@ -75,6 +76,10 @@ class ArticleRemoteMediator(
         } catch (e: Exception) {
             return MediatorResult.Error(e)
         }
+    }
+
+    private fun getCurrentPage(){
+
     }
 
     private suspend fun getRemoteKeyClosestToCurrentPosition(

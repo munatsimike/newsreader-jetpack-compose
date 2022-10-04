@@ -14,12 +14,15 @@ fun updateHeaderToken(token: Token?) {
 
 interface NewsApiService {
     @GET("Articles")
-    suspend fun getInitArticles(@Header("x-authtoken") token: String? = myToken): MyAPiResponse
+    suspend fun getInitArticles(
+        @Header("x-authtoken") token: String? = myToken,
+        @Query("count") count: Int = 50
+    ): MyAPiResponse
 
     @GET("Articles/{id}")
     suspend fun getMoreArticles(
         @Path("id") nextId: Int,
-        @Query("count") count: Int=50,
+        @Query("count") count: Int = 50,
     ): MyAPiResponse
 
     @GET("Articles/liked")
