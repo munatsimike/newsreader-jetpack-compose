@@ -7,6 +7,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import nl.project.michaelmunatsi.model.NewsArticle
 
+
+// CRUD operations for the article table
 @Dao
 interface ArticleDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -16,7 +18,7 @@ interface ArticleDao {
     fun getAllArticles(): PagingSource<Int, NewsArticle>
 
     @Query("DELETE FROM article")
-    fun deleteAllArticles()
+    suspend  fun deleteAllArticles()
 
     @Query("UPDATE article SET IsLiked = :isLike WHERE Id = :id")
     suspend fun likeDislike(isLike: Int, id: Int)

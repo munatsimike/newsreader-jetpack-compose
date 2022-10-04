@@ -13,6 +13,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import nl.project.michaelmunatsi.R
 
+// contains code for displaying and image
 object ImageViewer {
     @Composable
     fun Layout(modifier: Modifier = Modifier, imageUrl: String, size: Int, cornerRadius: Int = 0) {

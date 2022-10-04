@@ -12,15 +12,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-// show progress bar
+// contains code for showing progress bar
 object ProgressBar {
     @Composable
     fun Show(modifier: Modifier = Modifier) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .background(Color.White)
-                .padding(10.dp),
+                .background(Color.Transparent)
+                .padding(15.dp),
             horizontalArrangement = Arrangement.Center
         )
         {

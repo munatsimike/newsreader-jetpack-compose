@@ -53,8 +53,9 @@ class MainActivity : ComponentActivity() {
             ) {
                 val animatedNavController = rememberAnimatedNavController()
                 // is user navigating to the detail screen
-                bottomBarState.value =
-                    onDestinationChange(navController = animatedNavController, NavigationDestination.Detail)
+                bottomBarState.value = onDestinationChange(
+                    navController = animatedNavController, NavigationDestination.Detail
+                )
                 topBarState.value = bottomBarState.value
 
                 val modalBottomSheetState =
@@ -85,10 +86,6 @@ class MainActivity : ComponentActivity() {
         sharedUserViewModel: UserViewModel = hiltViewModel(),
         sharedNewsViewModel: NewsViewModel = hiltViewModel()
     ) {
-        // is user navigating to the favourite screen
-        sharedNewsViewModel.isFavouriteScreen =
-            !onDestinationChange(navController = navController, NavigationDestination.Favourite)
-
         LaunchedEffect(Unit) {
             sharedUserViewModel.authToken.collectLatest {
                 sharedUserViewModel.updateUserState(it)
@@ -139,11 +136,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
 @Composable
 fun onDestinationChange(
-    navController: NavHostController,
-    destination: NavigationDestination
+    navController: NavHostController, destination: NavigationDestination
 ): Boolean {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     return navBackStackEntry?.destination?.route?.let { destinationFromUrl(it) } != destination.screen_route
@@ -153,6 +148,5 @@ fun onDestinationChange(
 @Composable
 fun DefaultPreview() {
     MichaelmunatsiTheme {
-
     }
 }

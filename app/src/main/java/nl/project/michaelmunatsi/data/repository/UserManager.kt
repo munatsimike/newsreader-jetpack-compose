@@ -11,11 +11,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import nl.project.michaelmunatsi.model.Token
 import javax.inject.Inject
+import javax.inject.Singleton
 
+// this class contains code for storing and retrieving authentication token from preferences
 private val Context._dataStore: DataStore<Preferences> by preferencesDataStore(name = "key_store")
-
+@Singleton
 class UserManager @Inject constructor(@ApplicationContext context: Context){
-
     private val dataStore : DataStore<Preferences> by lazy {
         context._dataStore
     }

@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import nl.project.michaelmunatsi.utils.MyUtility.dimen
 
+// this contains code for the snack bar
 @Composable
 fun DefaultSnackBar(
     snackbarHostState: SnackbarHostState,
@@ -49,6 +50,7 @@ fun DefaultSnackBar(
     )
 }
 
+// this function displays the snackbar
 fun showSnackBar(
     message: String,
     coroutineScope: CoroutineScope,
@@ -56,18 +58,26 @@ fun showSnackBar(
     actionLabel: String? = null,
     action: () -> Unit = {},
 ) {
-    coroutineScope.launch {
-        val snackbarResult = scaffoldState.snackbarHostState.showSnackbar(
-            message = message,
-            actionLabel = actionLabel,
-            duration = SnackbarDuration.Long,
-        )
-        when (snackbarResult) {
-            SnackbarResult.Dismissed -> {}
-            SnackbarResult.ActionPerformed -> {
-                action.invoke()
+    if (message != "null") {
+        coroutineScope.launch {
+            val snackbarResult = message.let {
+                scaffoldState.snackbarHostState.showSnackbar(
+                    message = it,
+                    actionLabel = actionLabel,
+                    duration = SnackbarDuration.Long,
+                )
+            }
+            when (snackbarResult) {
+                SnackbarResult.Dismissed -> {
+
+                }
+                SnackbarResult.ActionPerformed -> {
+
+                    action.invoke()
+                }
+
+                else -> {}
             }
         }
     }
-
 }

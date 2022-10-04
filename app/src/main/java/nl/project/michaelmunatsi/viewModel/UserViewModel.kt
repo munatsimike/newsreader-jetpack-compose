@@ -3,13 +3,16 @@ package nl.project.michaelmunatsi.viewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.skydoves.sandwich.message
+import com.skydoves.sandwich.onError
+import com.skydoves.sandwich.onFailure
+import com.skydoves.sandwich.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import nl.project.michaelmunatsi.R
-import nl.project.michaelmunatsi.data.remote.updateHeaderToken
 import nl.project.michaelmunatsi.data.repository.UserRepository
 import nl.project.michaelmunatsi.model.Token
 import nl.project.michaelmunatsi.model.User
@@ -17,6 +20,9 @@ import nl.project.michaelmunatsi.model.User.Companion.validatePassword
 import nl.project.michaelmunatsi.model.User.Companion.validateUsername
 import nl.project.michaelmunatsi.model.state.FormState
 import nl.project.michaelmunatsi.model.state.UserState
+import nl.project.michaelmunatsi.utils.Coroutines
+import nl.project.michaelmunatsi.utils.MyUtility.onErrorMessage
+import nl.project.michaelmunatsi.utils.MyUtility.onFailureMessage
 import nl.project.michaelmunatsi.utils.MyUtility.resource
 import javax.inject.Inject
 
@@ -31,23 +37,11 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
     private var _userState = MutableStateFlow<UserState>(UserState.LoggedOut)
     val userState: StateFlow<UserState> = _userState
 
-    private val apiResponse = userRepository.response
     private val _formState = MutableStateFlow<FormState>(FormState.Initial)
     val formState: StateFlow<FormState> = _formState
 
     init {
         updateUserState()
-        handleApiResponsesMessages()
-        updateHeaderToken()
-    }
-
-    // update token that will be used  to fetch articles
-    private fun updateHeaderToken() {
-        viewModelScope.launch {
-            authToken.collectLatest {
-                updateHeaderToken(it)
-            }
-        }
     }
 
     private fun updateUserState() {
@@ -57,18 +51,6 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
                     _userState.value = UserState.LoggedOut
                 } else {
                     _userState.value = UserState.LoggedIn
-                }
-            }
-        }
-    }
-
-    private fun handleApiResponsesMessages() {
-        viewModelScope.launch {
-            apiResponse.collectLatest { message ->
-                if (message == resource.getString(R.string.user_registered)) {
-                    _formState.value = FormState.Success(message)
-                } else {
-                    _formState.value = FormState.Error(message)
                 }
             }
         }
@@ -116,14 +98,63 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
         if (isValidPassword.value == true && isValidUsername.value == true) {
             viewModelScope.launch {
                 if (selectedOption == resource.getString(R.string.login)) {
-                    userRepository.userLogin(user)
+                    loginUser(user)
                 } else {
-                    userRepository.userRegister(user)
+                    registerUser(user)
                 }
             }
         } else {
             _formState.value =
                 FormState.Error(resource.getString(R.string.Invalid_username_password))
+        }
+    }
+
+    private fun loginUser(user: User) {
+        viewModelScope.launch {
+            userRepository.userLogin(user)
+                .onSuccess {
+                    Coroutines.io {
+                        userRepository.saveAuthToken(data)
+                    }
+                }.onError {
+                    try {
+                        onErrorMessage(statusCode.code, message())
+                    } catch (e: Exception) {
+                        _formState.value = FormState.Error(e.message as String)
+                    }
+                }.onFailure {
+                    try {
+                        if (message().contains("code=401")) {
+                            _formState.value =
+                                FormState.Error(resource.getString(R.string.invalid_credentials))
+                        } else {
+                            onFailureMessage()
+                        }
+                    } catch (e: Exception) {
+                        _formState.value = FormState.Error(e.message as String)
+                    }
+                }
+        }
+    }
+
+    private fun registerUser(user: User) {
+        viewModelScope.launch {
+            userRepository.userRegister(user)
+                .onSuccess {
+                    _formState.value = FormState.Success(data.Message)
+                }.onError {
+                    try {
+                        onErrorMessage(statusCode.code, message())
+                    } catch (e: Exception) {
+                        _formState.value = FormState.Error(e.message as String)
+                    }
+                }.onFailure {
+                    try {
+                        onFailureMessage()
+                    } catch (e: Exception) {
+                        _formState.value = FormState.Error(e.message as String)
+                    }
+                }
         }
     }
 

@@ -6,6 +6,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import nl.project.michaelmunatsi.model.Category
 
+// The class contains converters for converting from list of objects to strings and vice versa when saving to room
 class Converters {
     @TypeConverter
     fun fromCategoryListToString(category: List<Category>): String {

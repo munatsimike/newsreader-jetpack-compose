@@ -15,6 +15,7 @@ import nl.project.michaelmunatsi.ui.showSnackBar
 import nl.project.michaelmunatsi.utils.MyUtility.resource
 import nl.project.michaelmunatsi.viewModel.UserViewModel
 
+// contains code for the bottom navigation bar
 @Composable
 fun BottomNavigationMenu(
     navController: NavController,
@@ -24,16 +25,18 @@ fun BottomNavigationMenu(
     modifier: Modifier = Modifier,
 
     ) {
+    // list of destinations
     val items: List<NavigationDestination> = listOf(
         NavigationDestination.Home, NavigationDestination.Favourite
     )
+    // color when menu is selected or not
     val selectedItemColor: Color = MaterialTheme.colors.secondary
     val unselectedIItemColor: Color = Color.White
 
+    // check if use is logged in
     val userState by userViewModel.userState.collectAsState()
     val scope = rememberCoroutineScope()
-    AnimatedVisibility(
-        visible = bottomBarState.value,
+    AnimatedVisibility(visible = bottomBarState.value,
         enter = slideInVertically(initialOffsetY = { it }),
         exit = slideOutVertically(targetOffsetY = { it }),
         content = {
@@ -56,6 +59,7 @@ fun BottomNavigationMenu(
                         unselectedContentColor = unselectedIItemColor,
                         selected = currentRoute == item.screen_route,
                         onClick = {
+                            // show message if you is not logged in
                             if (NavigationDestination.Favourite.destination == item.destination && userState == UserState.LoggedOut) {
                                 showSnackBar(
                                     message = resource.getString(R.string.user_not_logged_in),
@@ -63,8 +67,8 @@ fun BottomNavigationMenu(
                                     scaffoldState = scaffoldState
                                 )
                             } else {
+                                // navigate to the selected menu
                                 navController.navigate(item.screen_route) {
-
                                     navController.graph.startDestinationRoute?.let { screen_route ->
                                         popUpTo(screen_route) {
                                             saveState = true

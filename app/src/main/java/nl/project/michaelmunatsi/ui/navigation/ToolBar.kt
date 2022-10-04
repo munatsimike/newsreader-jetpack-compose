@@ -19,6 +19,7 @@ import nl.project.michaelmunatsi.R
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
+// contains code that builds the toolbar
 fun NewsReaderToolBar(
     topBarState: MutableState<Boolean>,
     modalBottomSheetState: ModalBottomSheetState,

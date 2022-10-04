@@ -1,6 +1,6 @@
 package nl.project.michaelmunatsi.model.state
 
-sealed class FormState: State {
+sealed class FormState{
     object Initial: FormState()
     object ToggleForm: FormState()
     data class PassTextChange(val newText: String): FormState()

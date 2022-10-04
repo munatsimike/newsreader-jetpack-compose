@@ -8,6 +8,7 @@ import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.utils.MyUtility.resource
 import java.util.*
 
+// contans code for all destination names, routes and icons
 sealed class NavigationDestination(
     val destination: String,
     val screen_route: String,

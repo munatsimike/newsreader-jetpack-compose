@@ -8,15 +8,18 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.model.state.UserState
 import nl.project.michaelmunatsi.ui.showSnackBar
 import nl.project.michaelmunatsi.utils.MyUtility.resource
-import nl.project.michaelmunatsi.viewModel.UserViewModel
 
+// contains code for the favourite icon
 object LikeDisLikeArticle {
 
     @Composable
@@ -24,19 +27,15 @@ object LikeDisLikeArticle {
         modifier: Modifier = Modifier,
         isChecked: Boolean,
         scaffoldState: ScaffoldState,
-        userViewModel: UserViewModel,
-        onLikeDislike: ()->Unit,
-
+        userState: UserState,
+        onLikeDislike: () -> Unit,
     ) {
-        var checked by remember { mutableStateOf(isChecked) }
-        val userState by userViewModel.userState.collectAsState()
         val scope = rememberCoroutineScope()
         IconToggleButton(
-            checked = checked,
+            checked = isChecked,
             onCheckedChange = {
                 if (userState == UserState.LoggedIn) {
-                   onLikeDislike.invoke()
-                    checked = !checked
+                    onLikeDislike.invoke()
                 } else {
                     showSnackBar(
                         message = resource.getString(R.string.user_not_logged_in),
@@ -47,9 +46,9 @@ object LikeDisLikeArticle {
             },
         ) {
             Icon(
-                imageVector = if (checked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                imageVector = if (isChecked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                 contentDescription = "Icon",
-                tint = if (checked) MaterialTheme.colors.secondary else MaterialTheme.colors.secondary,
+                tint = if (isChecked) MaterialTheme.colors.secondary else MaterialTheme.colors.secondary,
                 modifier = modifier.size(35.dp)
             )
         }

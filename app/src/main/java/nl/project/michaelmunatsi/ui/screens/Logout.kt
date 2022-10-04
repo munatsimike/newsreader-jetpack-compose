@@ -11,6 +11,7 @@ import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.utils.MyUtility.dimen
 import nl.project.michaelmunatsi.viewModel.UserViewModel
 
+// contains code for the logout screen
 object Logout {
     @Composable
     fun Screen(
@@ -26,8 +27,7 @@ object Logout {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Row(
-                ) {
+                Row {
                     Text(text = stringResource(id = R.string.welcome), fontSize = dimen.sp_20)
                     Spacer(modifier = modifier.width(dimen.dp_10))
                     Text(text = stringResource(id = R.string.welcome), fontSize = dimen.sp_20)

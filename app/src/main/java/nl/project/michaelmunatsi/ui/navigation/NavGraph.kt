@@ -13,7 +13,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import com.google.accompanist.navigation.animation.composable
 import androidx.navigation.navArgument
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.navigation.animation.AnimatedNavHost
+import nl.project.michaelmunatsi.model.NewsArticle
 import nl.project.michaelmunatsi.ui.screens.Detail
 import nl.project.michaelmunatsi.ui.screens.Favourite
 import nl.project.michaelmunatsi.ui.screens.Main
@@ -23,6 +26,7 @@ import nl.project.michaelmunatsi.viewModel.UserViewModel
 @OptIn(ExperimentalAnimationApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
+// contains code that builds the animated nav graph
 fun NewsAppNavGraph(
     navController: NavHostController,
     scaffoldState: ScaffoldState,

@@ -1,5 +1,7 @@
 package nl.project.michaelmunatsi.ui.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -8,42 +10,59 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import nl.project.michaelmunatsi.R
+import nl.project.michaelmunatsi.model.state.UserState
 import nl.project.michaelmunatsi.ui.ImageViewer
 import nl.project.michaelmunatsi.ui.layouts.LikeDisLikeArticle
 import nl.project.michaelmunatsi.ui.theme.Transparent
 import nl.project.michaelmunatsi.utils.MyUtility.UrlLinkBuilder
 import nl.project.michaelmunatsi.utils.MyUtility.dimen
+import nl.project.michaelmunatsi.utils.MyUtility.formatDate
 import nl.project.michaelmunatsi.utils.MyUtility.resource
+import nl.project.michaelmunatsi.utils.MyUtility.shareSheetIntent
 import nl.project.michaelmunatsi.viewModel.NewsViewModel
 import nl.project.michaelmunatsi.viewModel.UserViewModel
+import okhttp3.internal.userAgent
 
+// code for the detail screen
 object Detail {
+    @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun Screen(
         modifier: Modifier = Modifier,
-        onBackBtnClick: () -> Unit = {},
+        onBackBtnClick: () -> Unit,
         articleId: Int,
         sharedNewsViewModel: NewsViewModel,
         scaffoldState: ScaffoldState,
-        sharedUserViewModel: UserViewModel
+        sharedUserViewModel: UserViewModel,
     ) {
+        val userState by sharedUserViewModel.userState.collectAsState()
         val newsArticle = sharedNewsViewModel.selectedArticle
         if (newsArticle != null && newsArticle.Id == articleId) {
+            val context = LocalContext.current
+            val sheetIntent = shareSheetIntent(text = newsArticle.Url)
             Surface(
                 modifier = modifier.fillMaxHeight()
             ) {
                 Column(
                     modifier = modifier.verticalScroll(rememberScrollState())
                 ) {
+                    // display article image
                     Box {
-                        ImageViewer(imageUrl = newsArticle.Image, size = 380)
+                        ImageViewer(
+                            imageUrl = newsArticle.Image,
+                            size = 380
+                        )
+                        // display back arrow on top of the image
                         Box(
                             modifier = modifier
                                 .padding(dimen.dp_20)
@@ -63,8 +82,55 @@ object Detail {
                             }
                         }
                     }
+                    // display category
                     Column(modifier = modifier.padding(dimen.dp_15)) {
-                        Text(text = newsArticle.Summary)
+                        Row {
+                            newsArticle.Categories.forEach {
+                                Text(
+                                    text = it.Name,
+                                    style = MaterialTheme.typography.subtitle1,
+                                    color = MaterialTheme.colors.secondary
+                                )
+                            }
+                        }
+                        // display article date published
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = formatDate(newsArticle.PublishDate),
+                                style = MaterialTheme.typography.h6
+                            )
+
+                            Spacer(modifier = modifier.weight(1f))
+                            // display share icon
+                            IconButton(
+                                modifier =modifier.padding(start = 15.dp, end = 15.dp),
+                                onClick = { context.startActivity(sheetIntent) }
+                            ) {
+                                Icon(
+                                    modifier = modifier.size(28.dp),
+                                    imageVector = Icons.Default.Share,
+                                    contentDescription = resource.getString(R.string.share_icon),
+                                )
+
+                            }
+                            // show like and dislike button
+                            LikeDisLikeArticle.Layout(
+                                isChecked = newsArticle.IsLiked,
+                                scaffoldState = scaffoldState,
+                                userState = userState,
+
+                                ) {
+                                sharedNewsViewModel.likeDislike(
+                                    articleId = newsArticle.Id, !newsArticle.IsLiked
+                                )
+                            }
+                        }
+
+                        // show article summary
+                        Text(
+                            text = newsArticle.Summary, style = MaterialTheme.typography.body1
+                        )
+                        // show  a article Url
                         Spacer(modifier = modifier.height(dimen.dp_15))
                         UrlLinkBuilder(url = newsArticle.Url)
                         Row(
@@ -72,26 +138,14 @@ object Detail {
                         ) {
                             if (newsArticle.Related.isNotEmpty()) Text(
                                 text = resource.getString(R.string.related),
-                                fontSize = dimen.sp_20,
-                                fontWeight = FontWeight.Bold
+                                style = MaterialTheme.typography.h6,
                             )
                             Spacer(modifier = modifier.weight(1f))
-                            LikeDisLikeArticle.Layout(
-                                isChecked = newsArticle.IsLiked,
-                                scaffoldState = scaffoldState,
-                                userViewModel = sharedUserViewModel,
-
-                                ) {
-                                sharedNewsViewModel.likeDislike(
-                                    articleId = newsArticle.Id,
-                                    !newsArticle.IsLiked
-                                )
-                            }
                         }
+                        // show related articles
                         for (index in newsArticle.Related.indices) {
                             UrlLinkBuilder(
-                                index = (index + 1).toString(),
-                                url = newsArticle.Related[index]
+                                index = (index + 1).toString(), url = newsArticle.Related[index]
                             )
                         }
                     }

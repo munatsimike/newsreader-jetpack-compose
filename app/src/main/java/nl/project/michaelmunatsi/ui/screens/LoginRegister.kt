@@ -12,9 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.sp
 import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.model.User
 import nl.project.michaelmunatsi.model.state.FormState
@@ -23,6 +25,9 @@ import nl.project.michaelmunatsi.utils.MyUtility.dimen
 import nl.project.michaelmunatsi.utils.MyUtility.resource
 import nl.project.michaelmunatsi.viewModel.UserViewModel
 
+// contains code the the login and register screen
+// the from is divided into two sections. Frist section is the menu with two menu items: login and register
+// the second the body contains text fields and buttons
 object LoginRegister {
     private lateinit var successErrorMessageLabel: MutableState<String>
     private lateinit var labelTextColor: MutableState<Color>
@@ -36,11 +41,12 @@ object LoginRegister {
         val onSelectionChange = { text: String ->
             selectedOption.value = text
         }
-
+        // form menu options
         val options = listOf(
             R.string.login, R.string.register
         )
 
+        // form header with menu that contains login and register menu items
         Box(
             Modifier
                 .fillMaxWidth()
@@ -57,7 +63,9 @@ object LoginRegister {
                         .fillMaxHeight()
                         .background(Purple00)
                 ) {
+                    // menu item length: to each to cover 50% of the form width
                     var length = 0.5f
+                    // display menu item text: login and register
                     options.forEach { text ->
                         if (options.indexOf(text) == 1) {
                             length = 1f
@@ -69,6 +77,7 @@ object LoginRegister {
                                 onSelectionChange(resource.getString(text))
                                 sharedUserViewModel.onFormEvent(FormState.ToggleForm)
                             }
+                            // menu item background colors
                             .background(
                                 getMenuBackgroundColor(selected = stringResource(id = text) == selectedOption.value)
                             ), contentAlignment = Center) {
@@ -86,18 +95,20 @@ object LoginRegister {
         }
     }
 
+    // body of the form with text fields and buttons
     @Composable
     fun LoginRegisterForm(
         userViewModel: UserViewModel, selectedOption: String, modifier: Modifier = Modifier
     ) {
+        val colorRed = MaterialTheme.colors.onError
         successErrorMessageLabel = remember { mutableStateOf("") }
         username = remember { mutableStateOf("") }
         password = remember { mutableStateOf("") }
-        labelTextColor = remember { mutableStateOf(Color.Red) }
+        labelTextColor = remember { mutableStateOf(colorRed) }
         var passwordVisibility by remember { mutableStateOf(false) }
 
         HandleFormStateChanges(userViewModel)
-
+        // icons to show or hide password
         val icon = if (passwordVisibility) {
             R.drawable.ic_baseline_visibility_24
         } else {
@@ -105,50 +116,64 @@ object LoginRegister {
         }
 
         Column(
-            modifier =Modifier.background(MaterialTheme.colors.surface),
+            modifier = Modifier.background(MaterialTheme.colors.surface),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // label to display success or error messages
             Text(
                 modifier = modifier.padding(dimen.dp_15),
                 text = successErrorMessageLabel.value,
                 color = labelTextColor.value
             )
-            OutlinedTextField(value = username.value, onValueChange = { newtText ->
-                username.value = newtText
-                userViewModel.onFormEvent(FormState.UserTextChange(newtText))
-            }, label = { Text(text = stringResource(id = R.string.username)) })
+            // username input field
+            OutlinedTextField(
+                value = username.value,
+                onValueChange = { newtText ->
+                    username.value = newtText
+                    // validate input
+                    userViewModel.onFormEvent(FormState.UserTextChange(newtText))
+                },
+                label = { Text(text = stringResource(id = R.string.username)) },
+                textStyle = TextStyle(
+                    color = MaterialTheme.colors.onSurface,
+                    fontSize = 18.sp
+                )
+            )
 
             Spacer(modifier = Modifier.height(dimen.dp_15))
-            OutlinedTextField(
-                value = password.value,
-                onValueChange = { newtText ->
-                    password.value = newtText
-                    userViewModel.onFormEvent(FormState.PassTextChange(newtText))
-                },
-                label = { Text(text = stringResource(id = R.string.password)) },
-                trailingIcon = {
-                    IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
-                        Icon(
-                            painter = painterResource(id = icon),
-                            contentDescription = stringResource(
-                                id = R.string.password_icon
-                            )
+            // password input field
+            OutlinedTextField(value = password.value, onValueChange = { newtText ->
+                password.value = newtText
+                // validate input
+                userViewModel.onFormEvent(FormState.PassTextChange(newtText))
+            }, label = { Text(text = stringResource(id = R.string.password)) }, trailingIcon = {
+                IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
+                    Icon(
+                        painter = painterResource(id = icon),
+                        contentDescription = stringResource(
+                            id = R.string.password_icon
                         )
-                    }
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                ),
-                visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation()
+                    )
+                }
+            }, keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+            ),
+                // hide and show password
+                visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+                textStyle = TextStyle(
+                    color = MaterialTheme.colors.onSurface,
+                    fontSize = 18.sp
+                )
             )
             Spacer(modifier = Modifier.height(dimen.dp_15))
+            // login or register button
             Row(
-                modifier = modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.Center
+                modifier = modifier.fillMaxSize(), horizontalArrangement = Arrangement.Center
             ) {
                 Button(
                     onClick = {
                         userViewModel.userLoginRegister(
+                            // submit username and password to the remote saver
                             User(username.value, password.value), selectedOption
                         )
                     }, modifier = modifier.width(dimen.dp_200)
@@ -159,6 +184,7 @@ object LoginRegister {
         }
     }
 
+    // handle state changes
     @Composable
     private fun HandleFormStateChanges(userViewModel: UserViewModel) {
         val state by userViewModel.formState.collectAsState()
@@ -167,12 +193,13 @@ object LoginRegister {
                 successErrorMessageLabel.value = (state as FormState.Error).message
             }
             is FormState.ToggleForm -> {
+                // clear form when toggling between login and register
                 clearFromFields()
             }
             is FormState.Success -> {
                 clearFromFields()
                 selectedOption.value = resource.getString(R.string.login)
-                labelTextColor.value = MaterialTheme.colors.onPrimary
+                labelTextColor.value = MaterialTheme.colors.primaryVariant
                 successErrorMessageLabel.value = (state as FormState.Success).message
             }
             else -> {}

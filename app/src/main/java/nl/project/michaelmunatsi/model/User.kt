@@ -3,6 +3,7 @@ package nl.project.michaelmunatsi.model
 import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.utils.MyUtility.resource
 
+// contains coding for validating username and password
 data class User(val username: String, val password: String) {
 
     companion object {

@@ -4,16 +4,16 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import nl.project.michaelmunatsi.model.ArticleRemoteKeys
-
+import nl.project.michaelmunatsi.model.RemoteKey
+// CRUD operations for the remote keys table
 @Dao
-interface RemoteKeysDao {
-    @Query("SELECT * FROM article_remote_keys WHERE id =:id")
-    suspend fun getRemoteKeys(id: Int): ArticleRemoteKeys
+interface RemoteKeyDao {
+    @Query("SELECT * FROM remote_keys")
+    suspend fun getRemoteKey(): RemoteKey
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addAllRemoteKeys(remoteKeys: List<ArticleRemoteKeys>)
+    suspend fun insertOrReplace(remoteKeys: RemoteKey)
 
-    @Query("DELETE FROM article_remote_keys")
+    @Query("DELETE FROM remote_keys")
     suspend fun deleteAllRemoteKeys()
 }

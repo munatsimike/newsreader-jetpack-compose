@@ -7,23 +7,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import nl.project.michaelmunatsi.model.NewsArticle
+import nl.project.michaelmunatsi.model.state.UserState
 import nl.project.michaelmunatsi.utils.MyUtility.formatDate
 import nl.project.michaelmunatsi.viewModel.NewsViewModel
-import nl.project.michaelmunatsi.viewModel.UserViewModel
 
+// contains code for displaying a single news article: date titles image and summary
 object Article {
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun Layout(
         modifier: Modifier = Modifier,
         scaffoldState: ScaffoldState,
-        userViewModel: UserViewModel,
+        userState: UserState,
         sharedViewModel: NewsViewModel,
         article: NewsArticle,
         onArticleTitleClick: () -> Unit,
@@ -54,7 +53,7 @@ object Article {
                             Text(
                                 text = article.Title,
                                 style = MaterialTheme.typography.subtitle1,
-                                color = Color.Blue
+                                color = MaterialTheme.colors.primaryVariant
                             )
                         }
 
@@ -69,9 +68,8 @@ object Article {
                             LikeDisLikeArticle.Layout(
                                 isChecked = article.IsLiked,
                                 scaffoldState = scaffoldState,
-                                userViewModel = userViewModel,
+                                userState = userState,
                                ) {sharedViewModel.likeDislike(article.Id, !article.IsLiked) }
-
                         }
                     }
                 }
@@ -79,6 +77,7 @@ object Article {
                 Column {
                     Text(
                         text = article.Summary, maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.body1
                     )
                 }

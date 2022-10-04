@@ -4,72 +4,62 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.skydoves.sandwich.message
-import com.skydoves.sandwich.onError
-import com.skydoves.sandwich.onFailure
+import com.skydoves.sandwich.ApiResponse
 import kotlinx.coroutines.flow.Flow
-import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.data.database.ArticleDB
 import nl.project.michaelmunatsi.data.paging.ArticleRemoteMediator
-import nl.project.michaelmunatsi.data.paging.LikedArticlePager
 import nl.project.michaelmunatsi.data.remote.NewsApi
+import nl.project.michaelmunatsi.model.MyAPiResponse
 import nl.project.michaelmunatsi.model.NewsArticle
 import nl.project.michaelmunatsi.model.NewsArticleMapper
-import nl.project.michaelmunatsi.utils.MyUtility.resource
+import nl.project.michaelmunatsi.model.Token
 import nl.project.michaelmunatsi.utils.MyUtility.toInt
+import okhttp3.ResponseBody
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// contains code fetching articles from room and remote api
 @Singleton
 class NewsRepository @Inject constructor(
     private val database: ArticleDB,
-    private val newsMapper: NewsArticleMapper
-) {
+    private val newsMapper: NewsArticleMapper,
+
+    userManager: UserManager
+) : BaseRepository(userManager) {
 
     @OptIn(ExperimentalPagingApi::class)
     fun getAllArticles(): Flow<PagingData<NewsArticle>> {
-        val pagingSourceFactory = { database.newsDao.getAllArticles() }
-        return Pager(
-            config = PagingConfig(pageSize = 20),
+        return Pager(config = PagingConfig(pageSize = PAGE_SIZE),
             remoteMediator = ArticleRemoteMediator(
                 dataBase = database,
-                newsMapper
-            ), pagingSourceFactory = pagingSourceFactory
-        ).flow
+                newsArticleMapper = newsMapper,
+                this
+            ),
+            pagingSourceFactory = { database.newsDao.getAllArticles() }).flow
     }
 
     // like dislike remote api
-    suspend fun likeDislikeAPi(articleId: Int, isLike: Boolean) {
+    suspend fun likeDislikeAPi(
+        articleId: Int,
+        isLike: Boolean,
+        token: Token
+    ): ApiResponse<ResponseBody> {
         if (isLike) {
             // like article
-            NewsApi.retrofitService.likeArticle(articleId).onError {
-                onErrorMessage(statusCode = statusCode.code, message = message())
-            }.onFailure {
-                onFailureMessage()
-            }
-        } else {
-            // dislike article
-            NewsApi.retrofitService.disLikeArticle(articleId).onError {
-                onErrorMessage(statusCode = statusCode.code, message = message())
-            }.onFailure {
-                onFailureMessage()
-            }
+            return NewsApi.retrofitService.likeArticle(articleId, token.AuthToken)
         }
-        likeDislikeRoomDB(isLike, articleId)
+        // invalidate paging source
+        // dislike article
+        return NewsApi.retrofitService.disLikeArticle(articleId, token.AuthToken)
     }
 
     // fetch liked articles from api
-    fun likedArticles(): Flow<PagingData<NewsArticle>> {
-        return Pager(
-            config = PagingConfig(pageSize =10),
-            pagingSourceFactory = {
-                LikedArticlePager(newsMapper)
-            }
-        ).flow
+    suspend fun likedArticles(token: Token): ApiResponse<MyAPiResponse> {
+        return NewsApi.retrofitService.likedArticles(token = token.AuthToken)
     }
 
     // like dislike article in local database
-    private suspend fun likeDislikeRoomDB(isLike: Boolean, id: Int) {
+    suspend fun likeDislikeRoomDB(isLike: Boolean, id: Int) {
         if (isLike) {
             // like article
             database.newsDao.likeDislike(isLike.toInt(), id)
@@ -77,18 +67,9 @@ class NewsRepository @Inject constructor(
             // dislike article
             database.newsDao.likeDislike(isLike.toInt(), id)
         }
-
     }
 
-    private fun onFailureMessage() {
-        throw IllegalStateException(resource.getString(R.string.No_internet_access))
-    }
-
-    private fun onErrorMessage(statusCode: Int, message: String) {
-        if (statusCode == 401) {
-            throw IllegalStateException(resource.getString(R.string.user_not_logged_in))
-        } else {
-            throw IllegalStateException(message)
-        }
+    companion object {
+        const val PAGE_SIZE = 10
     }
 }
