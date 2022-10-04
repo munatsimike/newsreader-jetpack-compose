@@ -2,19 +2,25 @@ package nl.project.michaelmunatsi.ui.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.*
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import com.google.accompanist.navigation.animation.composable
 import androidx.navigation.navArgument
+import com.google.accompanist.navigation.animation.AnimatedNavHost
 import nl.project.michaelmunatsi.ui.screens.Detail
 import nl.project.michaelmunatsi.ui.screens.Favourite
 import nl.project.michaelmunatsi.ui.screens.Main
 import nl.project.michaelmunatsi.viewModel.NewsViewModel
 import nl.project.michaelmunatsi.viewModel.UserViewModel
 
+@OptIn(ExperimentalAnimationApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NewsAppNavGraph(
@@ -23,23 +29,46 @@ fun NewsAppNavGraph(
     sharedUserViewModel: UserViewModel,
     sharedViewModel: NewsViewModel
 ) {
-
-    NavHost(
-        navController = navController,
+    AnimatedNavHost(navController = navController,
         startDestination = NavigationDestination.Home.screen_route,
-    ) {
+        enterTransition = {
+            slideInHorizontally(animationSpec = tween(durationMillis = 800),
+                initialOffsetX = { -15000 })
+        },
+        exitTransition = {
+            slideOutHorizontally(animationSpec = tween(durationMillis = 0),
+                targetOffsetX = { 1000 })
+        },
+        popEnterTransition = {
+            slideInHorizontally(animationSpec = tween(durationMillis = 800),
+                initialOffsetX = { -15000 })
+        },
+        popExitTransition = {
+            slideOutHorizontally(animationSpec = tween(durationMillis = 0),
+                targetOffsetX = { 1000 })
+        }) {
         composable(
-            route = NavigationDestination.Home.screen_route
+            route = NavigationDestination.Home.screen_route,
         ) {
-            Main.Screen(onTitleClick = { articleId ->
-                navController.navigate(NavigationDestination.Detail.screen_route + "/$articleId")
-            }, scaffoldState =scaffoldState, sharedNewsViewModel = sharedViewModel, sharedUserViewModel = sharedUserViewModel)
+            Main.Screen(
+                onTitleClick = { articleId ->
+                    navController.navigate(NavigationDestination.Detail.screen_route + "/$articleId")
+                },
+                scaffoldState = scaffoldState,
+                sharedNewsViewModel = sharedViewModel,
+                sharedUserViewModel = sharedUserViewModel
+            )
         }
 
         composable(route = NavigationDestination.Favourite.screen_route) {
-            Favourite.Screen(onTitleClick = { articleId ->
-                navController.navigate(NavigationDestination.Detail.screen_route + "/$articleId")
-            }, scaffoldState =scaffoldState, sharedNewsViewModel = sharedViewModel, sharedUserViewModel = sharedUserViewModel)
+            Favourite.Screen(
+                onTitleClick = { articleId ->
+                    navController.navigate(NavigationDestination.Detail.screen_route + "/$articleId")
+                },
+                scaffoldState = scaffoldState,
+                sharedNewsViewModel = sharedViewModel,
+                sharedUserViewModel = sharedUserViewModel
+            )
         }
 
         composable(

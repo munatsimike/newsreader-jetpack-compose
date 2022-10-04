@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import nl.project.michaelmunatsi.model.state.UserState
@@ -39,7 +40,7 @@ import nl.project.michaelmunatsi.viewModel.UserViewModel
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
-    @OptIn(ExperimentalMaterialApi::class)
+    @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -50,10 +51,10 @@ class MainActivity : ComponentActivity() {
             MichaelmunatsiTheme(
                 darkTheme = false
             ) {
-                val navController = rememberNavController()
+                val animatedNavController = rememberAnimatedNavController()
                 // is user navigating to the detail screen
                 bottomBarState.value =
-                    onDestinationChange(navController = navController, NavigationDestination.Detail)
+                    onDestinationChange(navController = animatedNavController, NavigationDestination.Detail)
                 topBarState.value = bottomBarState.value
 
                 val modalBottomSheetState =
@@ -61,7 +62,7 @@ class MainActivity : ComponentActivity() {
                 val scaffoldState = rememberScaffoldState()
 
                 Start(
-                    navController = navController,
+                    navController = animatedNavController,
                     modalBottomSheetState = modalBottomSheetState,
                     topBarState = topBarState,
                     bottomBarState = bottomBarState,
