@@ -15,7 +15,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -142,11 +141,4 @@ fun onDestinationChange(
 ): Boolean {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     return navBackStackEntry?.destination?.route?.let { destinationFromUrl(it) } != destination.screen_route
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MichaelmunatsiTheme {
-    }
 }

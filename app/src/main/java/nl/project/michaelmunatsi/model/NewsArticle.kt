@@ -9,14 +9,14 @@ import java.io.Serializable
 @Entity(tableName = "article")
 open class NewsArticle(
     @PrimaryKey(autoGenerate = false)
-    var Id: Int,
-    var Categories: List<Category>,
-    var Feed: Int,
-    var Image: String,
-    var IsLiked: Boolean,
-    var PublishDate: String,
-    var Related: List<String>,
-    var Summary: String,
-    var Title: String,
-    var Url: String
-): Serializable
+    var Id: Int = 0,
+    var Categories: List<Category> = emptyList(),
+    var Feed: Int = 0,
+    var Image: String = "",
+    var IsLiked: Boolean = false,
+    var PublishDate: String = "",
+    var Related: List<String> = emptyList(),
+    var Summary: String = "",
+    var Title: String = "",
+    var Url: String = ""
+) : Serializable

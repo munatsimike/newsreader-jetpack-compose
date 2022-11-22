@@ -60,7 +60,6 @@ object LoginRegister {
                     modifier = modifier
                         .fillMaxWidth()
                         .fillMaxHeight(0.14f)
-                        .fillMaxHeight()
                         .background(Purple00)
                 ) {
                     // menu item length: to each to cover 50% of the form width
@@ -100,6 +99,7 @@ object LoginRegister {
     fun LoginRegisterForm(
         userViewModel: UserViewModel, selectedOption: String, modifier: Modifier = Modifier
     ) {
+        val maxChar = 20
         val colorRed = MaterialTheme.colors.onError
         successErrorMessageLabel = remember { mutableStateOf("") }
         username = remember { mutableStateOf("") }
@@ -129,40 +129,48 @@ object LoginRegister {
             OutlinedTextField(
                 value = username.value,
                 onValueChange = { newtText ->
-                    username.value = newtText
+                    if (newtText.trim().length <= maxChar) username.value = newtText.trim()
                     // validate input
-                    userViewModel.onFormEvent(FormState.UserTextChange(newtText))
+                    if (selectedOption == resource.getString(R.string.register)) {
+                        userViewModel.onFormEvent(FormState.UserTextChange(newtText))
+                    }
                 },
                 label = { Text(text = stringResource(id = R.string.username)) },
                 textStyle = TextStyle(
-                    color = MaterialTheme.colors.onSurface,
-                    fontSize = 18.sp
-                )
+                    color = MaterialTheme.colors.onSurface, fontSize = 18.sp
+                ),
+
             )
 
             Spacer(modifier = Modifier.height(dimen.dp_15))
             // password input field
-            OutlinedTextField(value = password.value, onValueChange = { newtText ->
-                password.value = newtText
-                // validate input
-                userViewModel.onFormEvent(FormState.PassTextChange(newtText))
-            }, label = { Text(text = stringResource(id = R.string.password)) }, trailingIcon = {
-                IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
-                    Icon(
-                        painter = painterResource(id = icon),
-                        contentDescription = stringResource(
-                            id = R.string.password_icon
+            OutlinedTextField(value = password.value,
+                onValueChange = { newtText ->
+                    if (newtText.trim().length <= maxChar) password.value = newtText.trim()
+                    // validate input
+                    if (selectedOption == resource.getString(R.string.register)) {
+                        userViewModel.onFormEvent(FormState.PassTextChange(newtText))
+                    }
+                },
+                label = { Text(text = stringResource(id = R.string.password)) },
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
+                        Icon(
+                            painter = painterResource(id = icon),
+                            contentDescription = stringResource(
+                                id = R.string.password_icon
+                            )
                         )
-                    )
-                }
-            }, keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-            ),
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                ),
+                singleLine = true,
                 // hide and show password
                 visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                 textStyle = TextStyle(
-                    color = MaterialTheme.colors.onSurface,
-                    fontSize = 18.sp
+                    color = MaterialTheme.colors.onSurface, fontSize = 18.sp
                 )
             )
             Spacer(modifier = Modifier.height(dimen.dp_15))
@@ -172,6 +180,10 @@ object LoginRegister {
             ) {
                 Button(
                     onClick = {
+                        if (selectedOption == resource.getString(R.string.login)) {
+                            userViewModel.onFormEvent(FormState.UserTextChange(username.value))
+                            userViewModel.onFormEvent(FormState.PassTextChange(password.value))
+                        }
                         userViewModel.userLoginRegister(
                             // submit username and password to the remote saver
                             User(username.value, password.value), selectedOption
@@ -195,6 +207,7 @@ object LoginRegister {
             is FormState.ToggleForm -> {
                 // clear form when toggling between login and register
                 clearFromFields()
+                userViewModel.onFormEvent(FormState.Initial)
             }
             is FormState.Success -> {
                 clearFromFields()

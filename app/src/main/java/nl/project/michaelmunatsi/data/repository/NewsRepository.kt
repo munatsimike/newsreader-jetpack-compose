@@ -38,6 +38,8 @@ class NewsRepository @Inject constructor(
             pagingSourceFactory = { database.newsDao.getAllArticles() }).flow
     }
 
+    suspend fun getArticle(id: Int): Flow<NewsArticle> = database.newsDao.getArticle(id)
+
     // like dislike remote api
     suspend fun likeDislikeAPi(
         articleId: Int,

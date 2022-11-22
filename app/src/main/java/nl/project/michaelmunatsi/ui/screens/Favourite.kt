@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ScaffoldState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -34,7 +37,6 @@ object Favourite {
         val scope = rememberCoroutineScope()
         val userState by sharedUserViewModel.userState.collectAsState()
         val swipeRefreshState = rememberSwipeRefreshState(false)
-        var snackBarMessage by remember { mutableStateOf("") }
         // collect network state
         val networkState by sharedNewsViewModel.networkState.collectAsState()
         Box(

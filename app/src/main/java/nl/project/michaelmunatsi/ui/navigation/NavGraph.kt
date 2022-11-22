@@ -2,21 +2,17 @@ package nl.project.michaelmunatsi.ui.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.*
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import com.google.accompanist.navigation.animation.composable
 import androidx.navigation.navArgument
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.navigation.animation.AnimatedNavHost
-import nl.project.michaelmunatsi.model.NewsArticle
+import com.google.accompanist.navigation.animation.composable
 import nl.project.michaelmunatsi.ui.screens.Detail
 import nl.project.michaelmunatsi.ui.screens.Favourite
 import nl.project.michaelmunatsi.ui.screens.Main

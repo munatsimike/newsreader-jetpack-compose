@@ -30,8 +30,10 @@ import nl.project.michaelmunatsi.ui.showSnackBar
 import nl.project.michaelmunatsi.utils.MyUtility
 import nl.project.michaelmunatsi.viewModel.NewsViewModel
 import nl.project.michaelmunatsi.viewModel.UserViewModel
+import retrofit2.HttpException
+import java.io.IOException
 
-object Main : BaseScreen() {
+object Main  {
 
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
@@ -162,5 +164,19 @@ private fun returnToPreviousListPosition(
 ) {
     scope.launch {
         scrollState.scrollToItem(sharedNewsViewModel.lazyColumnScrollPosition)
+    }
+}
+
+private fun errorMsg(throwable: Throwable): String {
+    return when (throwable) {
+        is IOException -> {
+            MyUtility.resource.getString(R.string.No_internet_access)
+        }
+        is HttpException -> {
+            MyUtility.resource.getString(R.string.user_not_logged_in)
+        }
+        else -> {
+            MyUtility.resource.getString(R.string.No_internet_access)
+        }
     }
 }

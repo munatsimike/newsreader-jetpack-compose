@@ -20,7 +20,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import nl.project.michaelmunatsi.R
-import nl.project.michaelmunatsi.model.state.UserState
 import nl.project.michaelmunatsi.ui.ImageViewer
 import nl.project.michaelmunatsi.ui.layouts.LikeDisLikeArticle
 import nl.project.michaelmunatsi.ui.theme.Transparent
@@ -31,7 +30,6 @@ import nl.project.michaelmunatsi.utils.MyUtility.resource
 import nl.project.michaelmunatsi.utils.MyUtility.shareSheetIntent
 import nl.project.michaelmunatsi.viewModel.NewsViewModel
 import nl.project.michaelmunatsi.viewModel.UserViewModel
-import okhttp3.internal.userAgent
 
 // code for the detail screen
 object Detail {
@@ -46,8 +44,8 @@ object Detail {
         sharedUserViewModel: UserViewModel,
     ) {
         val userState by sharedUserViewModel.userState.collectAsState()
-        val newsArticle = sharedNewsViewModel.selectedArticle
-        if (newsArticle != null && newsArticle.Id == articleId) {
+        val newsArticle by sharedNewsViewModel.article.collectAsState()
+        if (newsArticle.Id == articleId) {
             val context = LocalContext.current
             val sheetIntent = shareSheetIntent(text = newsArticle.Url)
             Surface(
@@ -97,7 +95,7 @@ object Detail {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 text = formatDate(newsArticle.PublishDate),
-                                style = MaterialTheme.typography.h6
+                                style = MaterialTheme.typography.subtitle1
                             )
 
                             Spacer(modifier = modifier.weight(1f))
@@ -138,7 +136,7 @@ object Detail {
                         ) {
                             if (newsArticle.Related.isNotEmpty()) Text(
                                 text = resource.getString(R.string.related),
-                                style = MaterialTheme.typography.h6,
+                                style = MaterialTheme.typography.body1,
                             )
                             Spacer(modifier = modifier.weight(1f))
                         }

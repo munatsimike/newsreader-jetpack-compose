@@ -27,9 +27,7 @@ object Logout {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Row {
-                    Text(text = stringResource(id = R.string.welcome), fontSize = dimen.sp_20)
-                    Spacer(modifier = modifier.width(dimen.dp_10))
+                Row (verticalAlignment = Alignment.CenterVertically){
                     Text(text = stringResource(id = R.string.welcome), fontSize = dimen.sp_20)
                 }
                 Spacer(modifier = modifier.height(dimen.dp_10))

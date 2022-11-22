@@ -87,6 +87,9 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
             is FormState.ToggleForm -> {
                 _formState.value = FormState.ToggleForm
             }
+            FormState.Initial -> {
+                _formState.value = FormState.Initial
+            }
             else -> {}
         }
     }
