@@ -140,11 +140,12 @@ object LoginRegister {
                     color = MaterialTheme.colors.onSurface, fontSize = 18.sp
                 ),
 
-            )
+                )
 
             Spacer(modifier = Modifier.height(dimen.dp_15))
             // password input field
-            OutlinedTextField(value = password.value,
+            OutlinedTextField(
+                value = password.value,
                 onValueChange = { newtText ->
                     if (newtText.trim().length <= maxChar) password.value = newtText.trim()
                     // validate input

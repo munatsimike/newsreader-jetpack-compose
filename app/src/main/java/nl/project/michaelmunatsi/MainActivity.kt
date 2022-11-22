@@ -47,9 +47,7 @@ class MainActivity : ComponentActivity() {
             val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
             val topBarState = rememberSaveable { (mutableStateOf(true)) }
 
-            MichaelmunatsiTheme(
-                darkTheme = false
-            ) {
+            MichaelmunatsiTheme {
                 val animatedNavController = rememberAnimatedNavController()
                 // is user navigating to the detail screen
                 bottomBarState.value = onDestinationChange(

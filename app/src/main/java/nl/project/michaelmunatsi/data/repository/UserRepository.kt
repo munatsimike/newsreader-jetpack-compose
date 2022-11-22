@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class UserRepository @Inject constructor(
     private val userManager: UserManager
-): BaseRepository(userManager) {
+) : BaseRepository(userManager) {
 
     suspend fun userLogin(
         user: User

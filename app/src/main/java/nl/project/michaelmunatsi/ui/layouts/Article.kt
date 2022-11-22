@@ -69,7 +69,7 @@ object Article {
                                 isChecked = article.IsLiked,
                                 scaffoldState = scaffoldState,
                                 userState = userState,
-                               ) {sharedViewModel.likeDislike(article.Id, !article.IsLiked) }
+                            ) { sharedViewModel.likeDislike(article.Id, !article.IsLiked) }
                         }
                     }
                 }

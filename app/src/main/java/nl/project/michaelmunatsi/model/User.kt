@@ -26,7 +26,7 @@ data class User(val username: String, val password: String) {
             } else if (!password.matches(".*[a-z].*".toRegex())) {
                 return resource.getString(R.string.must_contain_1_lower_case_character)
             } else if (!password.matches(".*[@#*\$%^&+=].*".toRegex())) {
-                return resource.getString(R.string.must_contain_1_special_character)+ " [@#*\$%^&+=]"
+                return resource.getString(R.string.must_contain_1_special_character) + " [@#*\$%^&+=]"
             }
             return resource.getString(R.string.valid)
         }

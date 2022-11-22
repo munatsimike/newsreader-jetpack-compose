@@ -8,6 +8,6 @@ data class RemoteKey(
     @PrimaryKey(autoGenerate = false)
     val id: Long,
     val nextId: Int?,
-){
-    constructor(nextId: Int?): this(1, nextId)
+) {
+    constructor(nextId: Int?) : this(1, nextId)
 }

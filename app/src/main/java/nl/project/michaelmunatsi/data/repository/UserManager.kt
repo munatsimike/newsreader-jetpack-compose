@@ -15,14 +15,15 @@ import javax.inject.Singleton
 
 // this class contains code for storing and retrieving authentication token from preferences
 private val Context._dataStore: DataStore<Preferences> by preferencesDataStore(name = "key_store")
+
 @Singleton
-class UserManager @Inject constructor(@ApplicationContext context: Context){
-    private val dataStore : DataStore<Preferences> by lazy {
+class UserManager @Inject constructor(@ApplicationContext context: Context) {
+    private val dataStore: DataStore<Preferences> by lazy {
         context._dataStore
     }
 
     companion object {
-      private  val TOKEN = stringPreferencesKey("AUTH_TOKEN")
+        private val TOKEN = stringPreferencesKey("AUTH_TOKEN")
     }
 
     // get saved authentication token
@@ -32,12 +33,12 @@ class UserManager @Inject constructor(@ApplicationContext context: Context){
 
     // save login authentication token
     suspend fun saveAuthToken(authToken: Token) {
-       dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[TOKEN] = authToken.AuthToken
         }
     }
 
-     suspend fun deleteAuthToken() {
+    suspend fun deleteAuthToken() {
         dataStore.edit { preferences ->
             preferences.clear()
         }

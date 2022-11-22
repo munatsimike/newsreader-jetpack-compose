@@ -13,7 +13,7 @@ import coil.compose.AsyncImage
 import nl.project.michaelmunatsi.R
 
 @Composable
-fun ImageViewer(modifier: Modifier= Modifier, imageUrl: String, size: Int, cornerRadius: Int = 0){
+fun ImageViewer(modifier: Modifier = Modifier, imageUrl: String, size: Int, cornerRadius: Int = 0) {
     AsyncImage(
         modifier = modifier
             .fillMaxWidth()

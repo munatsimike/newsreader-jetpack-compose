@@ -28,5 +28,6 @@
     <string name="No_internet_access">No internet access, please check your connection</string>
     <string name="user_not_logged_in">User not logged in, please login to save and access favourites</string>
     <string name="share_icon">Share icon</string>
-    <string name="invalid_credentials">Invalid credentials</string>>
+    <string name="invalid_credentials">Invalid credentials</string>
+    <string name="favourite_folder_empty">Favourite folder is empty.</string>>
 </resources>

@@ -24,7 +24,7 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromStringToStringList(value: String) : List<String>{
+    fun fromStringToStringList(value: String): List<String> {
         return Json.decodeFromString(value)
     }
 }

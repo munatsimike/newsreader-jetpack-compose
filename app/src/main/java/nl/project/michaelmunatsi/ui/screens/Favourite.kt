@@ -3,15 +3,20 @@ package nl.project.michaelmunatsi.ui.screens
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import nl.project.michaelmunatsi.R
@@ -49,8 +54,7 @@ object Favourite {
                 },
             ) {
                 // display list of article
-                LazyColumn(
-                ) {
+                LazyColumn {
                     when (networkState) {
                         is NetworkState.Success -> {
                             items((networkState as NetworkState.Success).data) { item ->
@@ -70,7 +74,7 @@ object Favourite {
                                 coroutineScope = scope,
                                 scaffoldState = scaffoldState,
                                 actionLabel = resource.getString(R.string.retry)
-                            ) { sharedNewsViewModel.loadFavorites()}
+                            ) { sharedNewsViewModel.loadFavorites() }
                         }
                         NetworkState.Loading -> {
                             item {
@@ -78,6 +82,19 @@ object Favourite {
                             }
                         }
                         NetworkState.NotLoading -> {}
+                    }
+                }
+
+                if ((networkState as NetworkState.Success).data.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.favourite_folder_empty),
+                            fontSize = 22.sp
+                        )
                     }
                 }
             }

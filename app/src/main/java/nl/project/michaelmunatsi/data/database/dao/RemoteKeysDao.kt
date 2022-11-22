@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import nl.project.michaelmunatsi.model.RemoteKey
+
 // CRUD operations for the remote keys table
 @Dao
 interface RemoteKeyDao {

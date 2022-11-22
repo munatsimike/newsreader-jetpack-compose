@@ -17,7 +17,7 @@ object Logout {
     fun Screen(
         sharedUserViewModel: UserViewModel,
         modifier: Modifier = Modifier,
-        ) {
+    ) {
         Box(
             modifier = modifier
                 .fillMaxWidth()
@@ -27,7 +27,7 @@ object Logout {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Row (verticalAlignment = Alignment.CenterVertically){
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = stringResource(id = R.string.welcome), fontSize = dimen.sp_20)
                 }
                 Spacer(modifier = modifier.height(dimen.dp_10))

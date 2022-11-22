@@ -1,6 +1,6 @@
 package nl.project.michaelmunatsi.model
 
-class NewsArticleEntity (
+class NewsArticleEntity(
     val Id: Int?,
     val Categories: List<Category>?,
     val Feed: Int?,

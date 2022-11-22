@@ -101,7 +101,7 @@ object Detail {
                             Spacer(modifier = modifier.weight(1f))
                             // display share icon
                             IconButton(
-                                modifier =modifier.padding(start = 15.dp, end = 15.dp),
+                                modifier = modifier.padding(start = 15.dp, end = 15.dp),
                                 onClick = { context.startActivity(sheetIntent) }
                             ) {
                                 Icon(
@@ -148,6 +148,12 @@ object Detail {
                         }
                     }
                 }
+            }
+        }else{
+            Box(modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                Text(text = "I am empty")
             }
         }
     }
