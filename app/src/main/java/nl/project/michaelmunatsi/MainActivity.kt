@@ -106,7 +106,7 @@ class MainActivity : ComponentActivity() {
         ) {
             Scaffold(topBar = {
                 NewsReaderToolBar(
-                    topBarState, modalBottomSheetState
+                    topBarState, modalBottomSheetState, userState
                 )
             }, bottomBar = {
                 BottomNavigationMenu(

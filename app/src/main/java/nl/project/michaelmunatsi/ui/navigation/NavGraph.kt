@@ -67,7 +67,10 @@ fun NewsAppNavGraph(
                 },
                 scaffoldState = scaffoldState,
                 sharedNewsViewModel = sharedViewModel,
-                sharedUserViewModel = sharedUserViewModel
+                sharedUserViewModel = sharedUserViewModel,
+                onLogout = {
+                    navController.navigate(NavigationDestination.Home.screen_route)
+                }
             )
         }
 

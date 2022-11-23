@@ -26,7 +26,7 @@ import nl.project.michaelmunatsi.utils.MyUtility.resource
 import nl.project.michaelmunatsi.viewModel.UserViewModel
 
 // contains code the the login and register screen
-// the from is divided into two sections. Frist section is the menu with two menu items: login and register
+// the from is divided into two sections. First section is the menu with two menu items: login and register
 // the second the body contains text fields and buttons
 object LoginRegister {
     private lateinit var successErrorMessageLabel: MutableState<String>
@@ -139,8 +139,7 @@ object LoginRegister {
                 textStyle = TextStyle(
                     color = MaterialTheme.colors.onSurface, fontSize = 18.sp
                 ),
-
-                )
+            )
 
             Spacer(modifier = Modifier.height(dimen.dp_15))
             // password input field

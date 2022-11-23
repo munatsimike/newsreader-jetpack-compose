@@ -10,6 +10,7 @@ import com.skydoves.sandwich.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.data.repository.NewsRepository
@@ -30,11 +31,6 @@ class NewsViewModel @Inject constructor(
 
     private val token = MutableStateFlow(Token(""))
 
-    // save list position
-    var lazyColumnScrollPosition = 0
-
-    // global variable to save user clicked article
-    var selectedArticle: NewsArticle? = null
     val networkState = MutableStateFlow<NetworkState>(NetworkState.NotLoading)
     val allArticles = newsRepository.getAllArticles().cachedIn(viewModelScope)
 
@@ -47,7 +43,7 @@ class NewsViewModel @Inject constructor(
 
     private fun getToken() {
         viewModelScope.launch {
-            newsRepository.authToken.collect {
+            newsRepository.authToken.collectLatest {
                 if (it != null) {
                     token.value = it
                     getLikedArticles()
@@ -103,13 +99,9 @@ class NewsViewModel @Inject constructor(
         getLikedArticles()
     }
 
-    fun getArticle(id: Int) {
-        viewModelScope.launch {
-            newsRepository.getArticle(id).collect {
-                _article.value = it
-            }
+    suspend fun fetchArticle(id: Int) {
+        newsRepository.getArticle(id).collectLatest {
+            _article.value = it
         }
     }
-
-
 }

@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -43,6 +44,9 @@ object Detail {
         scaffoldState: ScaffoldState,
         sharedUserViewModel: UserViewModel,
     ) {
+        LaunchedEffect(Unit) {
+            sharedNewsViewModel.fetchArticle(articleId)
+        }
         val userState by sharedUserViewModel.userState.collectAsState()
         val newsArticle by sharedNewsViewModel.article.collectAsState()
         if (newsArticle.Id == articleId) {
@@ -57,8 +61,7 @@ object Detail {
                     // display article image
                     Box {
                         ImageViewer(
-                            imageUrl = newsArticle.Image,
-                            size = 380
+                            imageUrl = newsArticle.Image, size = 380
                         )
                         // display back arrow on top of the image
                         Box(
@@ -87,7 +90,7 @@ object Detail {
                                 Text(
                                     text = it.Name,
                                     style = MaterialTheme.typography.subtitle1,
-                                    color = MaterialTheme.colors.secondary
+                                    color = MaterialTheme.colors.primary
                                 )
                             }
                         }
@@ -100,14 +103,13 @@ object Detail {
 
                             Spacer(modifier = modifier.weight(1f))
                             // display share icon
-                            IconButton(
-                                modifier = modifier.padding(start = 15.dp, end = 15.dp),
-                                onClick = { context.startActivity(sheetIntent) }
-                            ) {
+                            IconButton(modifier = modifier.padding(start = 15.dp, end = 15.dp),
+                                onClick = { context.startActivity(sheetIntent) }) {
                                 Icon(
                                     modifier = modifier.size(28.dp),
                                     imageVector = Icons.Default.Share,
                                     contentDescription = resource.getString(R.string.share_icon),
+                                    tint = MaterialTheme.colors.secondary
                                 )
 
                             }
@@ -119,7 +121,7 @@ object Detail {
 
                                 ) {
                                 sharedNewsViewModel.likeDislike(
-                                    articleId = newsArticle.Id, !newsArticle.IsLiked
+                                    articleId = articleId, !newsArticle.IsLiked
                                 )
                             }
                         }
@@ -148,12 +150,6 @@ object Detail {
                         }
                     }
                 }
-            }
-        }else{
-            Box(modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ){
-                Text(text = "I am empty")
             }
         }
     }

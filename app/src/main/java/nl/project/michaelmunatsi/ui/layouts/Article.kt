@@ -46,7 +46,6 @@ object Article {
                     Column {
                         TextButton(
                             onClick = {
-                                sharedViewModel.getArticle(article.Id)
                                 onArticleTitleClick.invoke()
                             }
                         ) {

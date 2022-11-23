@@ -16,6 +16,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import kotlinx.coroutines.launch
 import nl.project.michaelmunatsi.R
+import nl.project.michaelmunatsi.model.state.UserState
+import nl.project.michaelmunatsi.ui.theme.Teal200
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -23,11 +25,12 @@ import nl.project.michaelmunatsi.R
 fun NewsReaderToolBar(
     topBarState: MutableState<Boolean>,
     modalBottomSheetState: ModalBottomSheetState,
+    userState: UserState,
     modifier: Modifier = Modifier,
-) {
+
+    ) {
     val scope = rememberCoroutineScope()
-    AnimatedVisibility(
-        visible = topBarState.value,
+    AnimatedVisibility(visible = topBarState.value,
         enter = slideInVertically(initialOffsetY = { -it }),
         exit = slideOutVertically(targetOffsetY = { -it }),
         content = {
@@ -38,14 +41,16 @@ fun NewsReaderToolBar(
                     textAlign = TextAlign.Center,
                 )
             }, actions = {
-                IconButton(
-                    onClick = {
-                        scope.launch {
-                            modalBottomSheetState.show()
-                        }
+                IconButton(onClick = {
+                    scope.launch {
+                        modalBottomSheetState.show()
                     }
-                ) {
-                    Icon(imageVector = Icons.Filled.AccountCircle, "", tint = Color.White)
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.AccountCircle,
+                        "",
+                        tint = if (userState == UserState.LoggedOut) Color.White else Teal200
+                    )
                 }
             })
         })
