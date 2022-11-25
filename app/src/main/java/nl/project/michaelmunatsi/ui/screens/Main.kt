@@ -31,6 +31,7 @@ import nl.project.michaelmunatsi.viewModel.UserViewModel
 import retrofit2.HttpException
 import java.io.IOException
 
+// code to display articles on the main screen. The main screen fetches articles from room database
 object Main {
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -41,24 +42,27 @@ object Main {
         scaffoldState: ScaffoldState,
         onTitleClick: (id: Int) -> Unit = {}
     ) {
+        // Collect user state which can be logged in or logged out.Depending on the user state a user can like or dislike any article displayed in the list
         val userState by sharedUserViewModel.userState.collectAsState()
+        // collect articles from room
         val articles = sharedNewsViewModel.allArticles.collectAsLazyPagingItems()
         val refresh by sharedNewsViewModel.refresh.observeAsState()
         val scope = rememberCoroutineScope()
         val swipeRefreshState = rememberSwipeRefreshState(false)
 
+        // check if refresh is required. if a user logs out from the favourite, he will be directed to the this home screen. A refresh will be required to clear all liked articles
         if (refresh == true) {
             articles.refresh()
             sharedNewsViewModel.refresh(false)
         }
 
+        // refresh articles if userstate changes from logged in to logged out or vice versa
         LaunchedEffect(Unit) {
             snapshotFlow { userState }.collect {
                 articles.refresh()
             }
         }
 
-        // collect network state
         Box(
             modifier = Modifier.fillMaxWidth(),
         ) {
@@ -120,7 +124,7 @@ object Main {
                     }
                 }
             }
-            //detect errors from paging source
+
             when (val loadState = articles.loadState.refresh) {
                 is LoadState.Error -> {
                     LaunchedEffect(Unit) {

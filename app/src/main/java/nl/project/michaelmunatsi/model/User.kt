@@ -7,7 +7,8 @@ import nl.project.michaelmunatsi.utils.MyUtility.resource
 data class User(val username: String, val password: String) {
 
     companion object {
-       const val usernamePassMinChar = 8
+        const val usernamePassMinChar = 8
+
         // validate username on login or registration
         fun validateUsername(text: String): String {
             if (text.length < usernamePassMinChar) {

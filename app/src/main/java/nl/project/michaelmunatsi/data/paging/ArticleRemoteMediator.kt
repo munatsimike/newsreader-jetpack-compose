@@ -16,7 +16,6 @@ import nl.project.michaelmunatsi.model.RemoteKey
 import nl.project.michaelmunatsi.utils.MyUtility.getMapperResult
 
 // the class contains code for fetching from the API and saving to room
-// also it generates remote keys to be used when paging from room
 @OptIn(ExperimentalPagingApi::class)
 class ArticleRemoteMediator(
     private val dataBase: ArticleDB,
@@ -26,7 +25,6 @@ class ArticleRemoteMediator(
 
     private val articleDao = dataBase.newsDao
     private val remoteKeyDao = dataBase.remoteKeyDao
-    private var isToken = true
 
     @ExperimentalPagingApi
     override suspend fun load(

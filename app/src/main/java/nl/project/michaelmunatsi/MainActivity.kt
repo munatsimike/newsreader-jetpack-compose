@@ -49,7 +49,8 @@ class MainActivity : ComponentActivity() {
 
             MichaelmunatsiTheme {
                 val animatedNavController = rememberAnimatedNavController()
-                // is user navigating to the detail screen
+                // is user navigating to the detail screen. This will be used to hide or show top and bottom navigation bar.
+                // For the detail screen top and bottom navigation bar will be hidden
                 bottomBarState.value = onDestinationChange(
                     navController = animatedNavController, NavigationDestination.Detail
                 )
@@ -85,12 +86,14 @@ class MainActivity : ComponentActivity() {
     ) {
         val userState by sharedUserViewModel.userState.collectAsState()
 
+        // update user state from logged in to logged out or vice versa
         LaunchedEffect(Unit) {
             sharedUserViewModel.authToken.collectLatest {
                 sharedUserViewModel.updateUserState(it)
             }
         }
 
+        // hide modal bottom sheet after a successful log in or log out
         LaunchedEffect(Unit) {
             snapshotFlow { userState }.collectLatest {
                 modalBottomSheetState.hide()
@@ -99,6 +102,7 @@ class MainActivity : ComponentActivity() {
 
         ModalBottomSheetLayout(
             sheetContent = {
+                // show appropriate screen based on the user state.
                 when (userState) {
                     UserState.LoggedIn -> {
                         Logout.Screen(sharedUserViewModel)
@@ -113,11 +117,9 @@ class MainActivity : ComponentActivity() {
             sheetBackgroundColor = Color.White,
         ) {
             Scaffold(topBar = {
-                userState?.let {
-                    NewsReaderToolBar(
-                        topBarState, modalBottomSheetState, it
-                    )
-                }
+                NewsReaderToolBar(
+                    topBarState, modalBottomSheetState, userState
+                )
             }, bottomBar = {
                 BottomNavigationMenu(
                     navController, bottomBarState, scaffoldState, sharedUserViewModel

@@ -1,6 +1,9 @@
 package nl.project.michaelmunatsi.ui.screens
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -21,22 +24,14 @@ object Logout {
         Box(
             modifier = modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.25f),
+                .fillMaxHeight(0.20f),
             contentAlignment = Alignment.Center
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+            // logout button
+            Button(
+                onClick = { sharedUserViewModel.logout() }, modifier = modifier.width(dimen.dp_200)
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = stringResource(id = R.string.welcome), fontSize = dimen.sp_20)
-                }
-                Spacer(modifier = modifier.height(dimen.dp_10))
-                Button(
-                    onClick = { sharedUserViewModel.logout() },
-                    modifier = modifier.width(dimen.dp_200)
-                ) {
-                    Text(text = stringResource(id = R.string.logout), fontSize = dimen.sp_20)
-                }
+                Text(text = stringResource(id = R.string.logout), fontSize = dimen.sp_20)
             }
         }
     }

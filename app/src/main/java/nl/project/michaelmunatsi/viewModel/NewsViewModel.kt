@@ -13,7 +13,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.data.repository.NewsRepository

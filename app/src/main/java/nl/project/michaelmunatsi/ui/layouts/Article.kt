@@ -15,7 +15,7 @@ import nl.project.michaelmunatsi.model.state.UserState
 import nl.project.michaelmunatsi.utils.MyUtility.formatDate
 import nl.project.michaelmunatsi.viewModel.NewsViewModel
 
-// contains code for displaying a single news article: date titles image and summary
+// contains code for displaying an article: date, title, image and summary
 object Article {
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable

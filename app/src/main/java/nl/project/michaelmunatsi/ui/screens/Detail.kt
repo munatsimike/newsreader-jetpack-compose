@@ -32,7 +32,7 @@ import nl.project.michaelmunatsi.utils.MyUtility.shareSheetIntent
 import nl.project.michaelmunatsi.viewModel.NewsViewModel
 import nl.project.michaelmunatsi.viewModel.UserViewModel
 
-// code for the detail screen
+// code for the detail screen, this screen will use articleId argument to fetch selected article from room
 object Detail {
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
@@ -44,11 +44,19 @@ object Detail {
         scaffoldState: ScaffoldState,
         sharedUserViewModel: UserViewModel,
     ) {
+
+        //fetch selected item from room
         LaunchedEffect(Unit) {
             sharedNewsViewModel.fetchArticle(articleId)
         }
+
+        // userstate can be logged in or logged out.
+        // Depending on the userstate a user can like or dislike the displayed article
         val userState by sharedUserViewModel.userState.collectAsState()
+        // collect the fetched article
         val newsArticle by sharedNewsViewModel.article.collectAsState()
+
+        // Display article if collected article is the same as the one selected by the user.
         if (newsArticle.Id == articleId) {
             val context = LocalContext.current
             val sheetIntent = shareSheetIntent(text = newsArticle.Url)
@@ -136,6 +144,7 @@ object Detail {
                         Row(
                             verticalAlignment = Alignment.Bottom
                         ) {
+                            // check if article contains related articles
                             if (newsArticle.Related.isNotEmpty()) Text(
                                 text = resource.getString(R.string.related),
                                 style = MaterialTheme.typography.body1,

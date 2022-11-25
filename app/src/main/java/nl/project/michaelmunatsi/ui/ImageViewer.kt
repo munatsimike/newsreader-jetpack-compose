@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import nl.project.michaelmunatsi.R
 
+// code to display images
 @Composable
 fun ImageViewer(modifier: Modifier = Modifier, imageUrl: String, size: Int, cornerRadius: Int = 0) {
     AsyncImage(

@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-// contains code for showing progress bar
+// contains code for the progress bar
 object ProgressBar {
     @Composable
     fun Show(modifier: Modifier = Modifier) {

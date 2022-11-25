@@ -26,9 +26,9 @@ import nl.project.michaelmunatsi.utils.MyUtility.dimen
 import nl.project.michaelmunatsi.utils.MyUtility.resource
 import nl.project.michaelmunatsi.viewModel.UserViewModel
 
-// contains code the the login and register screen
-// the from is divided into two sections. First section is the menu with two menu items: login and register
-// the second the body contains text fields and buttons
+// contains code for the login and register screen
+// the form is divided into two sections. First section is the menu with two menu items: login and register
+// the second section is the body which contains text fields and buttons
 object LoginRegister {
     private lateinit var successErrorMessageLabel: MutableState<String>
     private lateinit var labelTextColor: MutableState<Color>
@@ -144,7 +144,8 @@ object LoginRegister {
 
             Spacer(modifier = Modifier.height(dimen.dp_15))
             // password input field
-            OutlinedTextField(value = password.value,
+            OutlinedTextField(
+                value = password.value,
                 onValueChange = { newtText ->
                     if (newtText.trim().length <= maxChar) password.value = newtText.trim()
                     // validate input
@@ -207,6 +208,7 @@ object LoginRegister {
         val state by userViewModel.formState.collectAsState()
         when (state) {
             is FormState.Error -> {
+                // display error
                 successErrorMessageLabel.value = (state as FormState.Error).message
             }
             is FormState.ToggleForm -> {

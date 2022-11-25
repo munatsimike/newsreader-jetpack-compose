@@ -30,7 +30,7 @@ import nl.project.michaelmunatsi.utils.MyUtility.resource
 import nl.project.michaelmunatsi.viewModel.NewsViewModel
 import nl.project.michaelmunatsi.viewModel.UserViewModel
 
-// contains code for displaying liked articles
+// code for displaying liked articles. Liked articles will be fetched from the remote server
 object Favourite {
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -44,9 +44,11 @@ object Favourite {
         onTitleClick: (id: Int) -> Unit,
     ) {
         val scope = rememberCoroutineScope()
+        // userstate can be logged in or logged out.
+        // Depending on the userstate a user can like or dislike any article displayed in the list
         val userState by sharedUserViewModel.userState.collectAsState()
         val swipeRefreshState = rememberSwipeRefreshState(false)
-        // collect network state
+        // collect network state, network state can be loading, error or success
         val networkState by sharedNewsViewModel.networkState.collectAsState()
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -74,6 +76,7 @@ object Favourite {
                             }
 
                             item {
+                                //check if there are not liked article and notify user
                                 if (data.isEmpty()) {
                                     Column(modifier = modifier.fillParentMaxSize()) {
                                         ShowNoFavoritesMessage()
@@ -81,6 +84,7 @@ object Favourite {
                                 }
                             }
                         }
+                        // show error message
                         is NetworkState.Error -> {
                             showSnackBar(
                                 message = (networkState as NetworkState.Error).error.toString(),
@@ -89,6 +93,7 @@ object Favourite {
                                 actionLabel = resource.getString(R.string.retry)
                             ) { sharedNewsViewModel.loadFavorites() }
                         }
+                        // show progress bar
                         NetworkState.Loading -> {
                             item {
                                 ProgressBar.Show()
@@ -99,8 +104,10 @@ object Favourite {
                 }
             }
         }
+        // redirect user to the home screen if he logs out from the favourite screen
         when (userState) {
             is UserState.LoggedOut -> {
+                // marker  for the home screen to know that user logged out from the favourite screen so a refresh is required to clear all liked articles
                 sharedNewsViewModel.refresh(true)
                 navigateToHomeScreen.invoke()
             }
@@ -108,6 +115,7 @@ object Favourite {
         }
     }
 
+    // show message to tell user that there no like articles
     @Composable
     private fun ShowNoFavoritesMessage(modifier: Modifier = Modifier) {
         Column(
