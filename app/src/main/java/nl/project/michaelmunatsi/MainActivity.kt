@@ -83,19 +83,27 @@ class MainActivity : ComponentActivity() {
         sharedUserViewModel: UserViewModel = hiltViewModel(),
         sharedNewsViewModel: NewsViewModel = hiltViewModel()
     ) {
+        val userState by sharedUserViewModel.userState.collectAsState()
+
         LaunchedEffect(Unit) {
             sharedUserViewModel.authToken.collectLatest {
                 sharedUserViewModel.updateUserState(it)
             }
         }
-        val userState by sharedUserViewModel.userState.collectAsState()
+
+        LaunchedEffect(Unit) {
+            snapshotFlow { userState }.collectLatest {
+                modalBottomSheetState.hide()
+            }
+        }
+
         ModalBottomSheetLayout(
             sheetContent = {
                 when (userState) {
-                    is UserState.LoggedIn -> {
+                    UserState.LoggedIn -> {
                         Logout.Screen(sharedUserViewModel)
                     }
-                    is UserState.LoggedOut -> {
+                    UserState.LoggedOut -> {
                         LoginRegister.Screen(sharedUserViewModel)
                     }
                 }
@@ -105,9 +113,11 @@ class MainActivity : ComponentActivity() {
             sheetBackgroundColor = Color.White,
         ) {
             Scaffold(topBar = {
-                NewsReaderToolBar(
-                    topBarState, modalBottomSheetState, userState
-                )
+                userState?.let {
+                    NewsReaderToolBar(
+                        topBarState, modalBottomSheetState, it
+                    )
+                }
             }, bottomBar = {
                 BottomNavigationMenu(
                     navController, bottomBarState, scaffoldState, sharedUserViewModel
@@ -117,10 +127,7 @@ class MainActivity : ComponentActivity() {
             }) { innerPadding ->
                 Box(modifier = modifier.padding(innerPadding)) {
                     NewsAppNavGraph(
-                        navController,
-                        scaffoldState,
-                        sharedUserViewModel,
-                        sharedNewsViewModel
+                        navController, scaffoldState, sharedUserViewModel, sharedNewsViewModel
                     )
                     DefaultSnackBar(
                         snackbarHostState = scaffoldState.snackbarHostState, onAction = {

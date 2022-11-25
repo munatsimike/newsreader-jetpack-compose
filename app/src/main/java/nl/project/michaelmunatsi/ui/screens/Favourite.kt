@@ -40,7 +40,7 @@ object Favourite {
         sharedNewsViewModel: NewsViewModel,
         scaffoldState: ScaffoldState,
         modifier: Modifier = Modifier,
-        onLogout: () -> Unit,
+        navigateToHomeScreen: () -> Unit,
         onTitleClick: (id: Int) -> Unit,
     ) {
         val scope = rememberCoroutineScope()
@@ -101,7 +101,8 @@ object Favourite {
         }
         when (userState) {
             is UserState.LoggedOut -> {
-                onLogout.invoke()
+                sharedNewsViewModel.refresh(true)
+                navigateToHomeScreen.invoke()
             }
             else -> {}
         }

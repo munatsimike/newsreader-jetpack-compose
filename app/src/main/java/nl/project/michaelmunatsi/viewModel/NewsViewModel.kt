@@ -1,5 +1,7 @@
 package nl.project.michaelmunatsi.viewModel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
@@ -11,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.data.repository.NewsRepository
@@ -30,7 +33,8 @@ class NewsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val token = MutableStateFlow(Token(""))
-
+    private var _refresh = MutableLiveData(false)
+    val refresh: LiveData<Boolean> = _refresh
     val networkState = MutableStateFlow<NetworkState>(NetworkState.NotLoading)
     val allArticles = newsRepository.getAllArticles().cachedIn(viewModelScope)
 
@@ -103,5 +107,9 @@ class NewsViewModel @Inject constructor(
         newsRepository.getArticle(id).collectLatest {
             _article.value = it
         }
+    }
+
+    fun refresh(refresh: Boolean) {
+        _refresh.value = refresh
     }
 }

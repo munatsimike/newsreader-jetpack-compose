@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,6 +33,7 @@ import java.io.IOException
 
 object Main {
 
+    @OptIn(ExperimentalMaterialApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun Screen(
@@ -41,15 +44,20 @@ object Main {
     ) {
         val userState by sharedUserViewModel.userState.collectAsState()
         val articles = sharedNewsViewModel.allArticles.collectAsLazyPagingItems()
+        val refresh by sharedNewsViewModel.refresh.observeAsState()
         val scope = rememberCoroutineScope()
         val swipeRefreshState = rememberSwipeRefreshState(false)
         var snackBarMessage by remember { mutableStateOf("") }
 
+        if (refresh == true) {
+            articles.refresh()
+            sharedNewsViewModel.refresh(false)
+        }
+
         LaunchedEffect(Unit) {
-            snapshotFlow { userState }
-                .collect {
-                    articles.refresh()
-                }
+            snapshotFlow { userState }.collect {
+                articles.refresh()
+            }
         }
 
         // collect network state
@@ -78,7 +86,6 @@ object Main {
                     }
 
                     when (val loadState = articles.loadState.append) {
-
                         is LoadState.Error -> {
                             if (snackBarMessage == "") {
                                 snackBarMessage = errorMsg(loadState.error)
