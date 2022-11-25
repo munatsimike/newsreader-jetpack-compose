@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -21,6 +20,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.flow.collectLatest
 import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.ui.layouts.Article
 import nl.project.michaelmunatsi.ui.layouts.ProgressBar
@@ -33,7 +33,6 @@ import java.io.IOException
 
 object Main {
 
-    @OptIn(ExperimentalMaterialApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun Screen(
@@ -47,7 +46,6 @@ object Main {
         val refresh by sharedNewsViewModel.refresh.observeAsState()
         val scope = rememberCoroutineScope()
         val swipeRefreshState = rememberSwipeRefreshState(false)
-        var snackBarMessage by remember { mutableStateOf("") }
 
         if (refresh == true) {
             articles.refresh()
@@ -77,7 +75,11 @@ object Main {
                             // display news article card
                             Article.Layout(
                                 article = item,
-                                onArticleTitleClick = { onTitleClick.invoke(item.Id) },
+                                onArticleTitleClick = {
+                                    if (articles.loadState.refresh != LoadState.Loading) {
+                                        onTitleClick.invoke(item.Id)
+                                    }
+                                },
                                 scaffoldState = scaffoldState,
                                 userState = userState,
                                 sharedViewModel = sharedNewsViewModel,
@@ -87,15 +89,18 @@ object Main {
 
                     when (val loadState = articles.loadState.append) {
                         is LoadState.Error -> {
-                            if (snackBarMessage == "") {
-                                snackBarMessage = errorMsg(loadState.error)
-                                showSnackBar(
-                                    message = snackBarMessage,
-                                    coroutineScope = scope,
-                                    scaffoldState = scaffoldState,
-                                    actionLabel = MyUtility.resource.getString(R.string.retry)
-                                ) {
-                                    articles.retry()
+                            this.item {
+                                LaunchedEffect(Unit) {
+                                    snapshotFlow { errorMsg(loadState.error) }.collectLatest {
+                                        showSnackBar(
+                                            message = errorMsg(loadState.error),
+                                            coroutineScope = scope,
+                                            scaffoldState = scaffoldState,
+                                            actionLabel = MyUtility.resource.getString(R.string.retry)
+                                        ) {
+                                            articles.retry()
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -107,7 +112,6 @@ object Main {
                                         .background(Color.Transparent),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    snackBarMessage = ""
                                     ProgressBar.Show()
                                 }
                             }
@@ -119,27 +123,25 @@ object Main {
             //detect errors from paging source
             when (val loadState = articles.loadState.refresh) {
                 is LoadState.Error -> {
-                    if (snackBarMessage == "") {
-                        snackBarMessage = errorMsg(loadState.error)
-                        showSnackBar(
-                            message = snackBarMessage,
-                            coroutineScope = scope,
-                            scaffoldState = scaffoldState,
-                            actionLabel = MyUtility.resource.getString(R.string.retry)
-                        ) {
-                            articles.retry()
+                    LaunchedEffect(Unit) {
+                        snapshotFlow { errorMsg(loadState.error) }.collectLatest {
+                            showSnackBar(
+                                message = errorMsg(loadState.error),
+                                coroutineScope = scope,
+                                scaffoldState = scaffoldState,
+                                actionLabel = MyUtility.resource.getString(R.string.retry)
+                            ) {
+                                articles.retry()
+                            }
                         }
                     }
                 }
                 is LoadState.Loading -> {
                     Row {
-                        snackBarMessage = ""
                         ProgressBar.Show()
                     }
                 }
-                else -> {
-
-                }
+                else -> {}
             }
         }
     }
@@ -158,3 +160,5 @@ private fun errorMsg(throwable: Throwable): String {
         }
     }
 }
+
+

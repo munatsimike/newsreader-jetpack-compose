@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.sp
 import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.model.User
+import nl.project.michaelmunatsi.model.User.Companion.usernamePassMinChar
 import nl.project.michaelmunatsi.model.state.FormState
 import nl.project.michaelmunatsi.ui.theme.Purple00
 import nl.project.michaelmunatsi.utils.MyUtility.dimen
@@ -143,8 +144,7 @@ object LoginRegister {
 
             Spacer(modifier = Modifier.height(dimen.dp_15))
             // password input field
-            OutlinedTextField(
-                value = password.value,
+            OutlinedTextField(value = password.value,
                 onValueChange = { newtText ->
                     if (newtText.trim().length <= maxChar) password.value = newtText.trim()
                     // validate input
@@ -184,15 +184,20 @@ object LoginRegister {
                             userViewModel.onFormEvent(FormState.UserTextChange(username.value))
                             userViewModel.onFormEvent(FormState.PassTextChange(password.value))
                         }
-                        userViewModel.userLoginRegister(
-                            // submit username and password to the remote saver
-                            User(username.value, password.value), selectedOption
-                        )
+
+                        if (username.value.length >= usernamePassMinChar && password.value.length >= usernamePassMinChar) {
+                            userViewModel.userLoginRegister(
+                                // submit username and password to the remote saver
+                                User(username.value, password.value), selectedOption
+                            )
+                        }
                     }, modifier = modifier.width(dimen.dp_200)
+
                 ) {
                     Text(text = selectedOption, fontSize = dimen.sp_20)
                 }
             }
+
         }
     }
 

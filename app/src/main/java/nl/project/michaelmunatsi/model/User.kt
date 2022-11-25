@@ -7,9 +7,10 @@ import nl.project.michaelmunatsi.utils.MyUtility.resource
 data class User(val username: String, val password: String) {
 
     companion object {
+       const val usernamePassMinChar = 8
         // validate username on login or registration
         fun validateUsername(text: String): String {
-            if (text.length < 8) {
+            if (text.length < usernamePassMinChar) {
                 return resource.getString(R.string.username_must_contain_at_least_8_Character)
             } else if (!text.matches("^[0-9a-zA-Z]+$".toRegex())) {
                 return resource.getString(R.string.username_must_contain_letters_numbers_only)
@@ -19,7 +20,7 @@ data class User(val username: String, val password: String) {
 
         // validate password on login or user registration
         fun validatePassword(password: String): String {
-            if (password.length < 8) {
+            if (password.length < usernamePassMinChar) {
                 return resource.getString(R.string.password_must_contain_at_least_8_Character)
             } else if (!password.matches(".*[A-Z].*".toRegex())) {
                 return resource.getString(R.string.must_contain_1_upper_case_character)
