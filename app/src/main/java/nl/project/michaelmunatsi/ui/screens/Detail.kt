@@ -47,7 +47,7 @@ object Detail {
 
         //fetch selected item from room
         LaunchedEffect(Unit) {
-            sharedNewsViewModel.fetchArticle(articleId)
+            sharedNewsViewModel.fetchArticleById(articleId)
         }
 
         // userstate can be logged in or logged out.
@@ -57,9 +57,9 @@ object Detail {
         val newsArticle by sharedNewsViewModel.article.collectAsState()
 
         // Display article if collected article is the same as the one selected by the user.
-        if (newsArticle.Id == articleId) {
+        newsArticle?.let { article ->
             val context = LocalContext.current
-            val sheetIntent = shareSheetIntent(text = newsArticle.Url)
+            val sheetIntent = shareSheetIntent(text = article.Url)
             Surface(
                 modifier = modifier.fillMaxHeight()
             ) {
@@ -69,7 +69,7 @@ object Detail {
                     // display article image
                     Box {
                         ImageViewer(
-                            imageUrl = newsArticle.Image, size = 380
+                            imageUrl = article.Image, size = 380
                         )
                         // display back arrow on top of the image
                         Box(
@@ -94,7 +94,7 @@ object Detail {
                     // display category
                     Column(modifier = modifier.padding(dimen.dp_15)) {
                         Row {
-                            newsArticle.Categories.forEach {
+                            article.Categories.forEach {
                                 Text(
                                     text = it.Name,
                                     style = MaterialTheme.typography.subtitle1,
@@ -105,7 +105,7 @@ object Detail {
                         // display article date published
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = formatDate(newsArticle.PublishDate),
+                                text = formatDate(article.PublishDate),
                                 style = MaterialTheme.typography.subtitle1
                             )
 
@@ -123,38 +123,38 @@ object Detail {
                             }
                             // show like and dislike button
                             LikeDisLikeArticle.Layout(
-                                isChecked = newsArticle.IsLiked,
+                                isChecked = article.IsLiked,
                                 scaffoldState = scaffoldState,
                                 userState = userState,
 
                                 ) {
                                 sharedNewsViewModel.likeDislike(
-                                    articleId = articleId, !newsArticle.IsLiked
+                                    articleId = articleId, !article.IsLiked
                                 )
                             }
                         }
 
                         // show article summary
                         Text(
-                            text = newsArticle.Summary, style = MaterialTheme.typography.body1
+                            text = article.Summary, style = MaterialTheme.typography.body1
                         )
                         // show  a article Url
                         Spacer(modifier = modifier.height(dimen.dp_15))
-                        UrlLinkBuilder(url = newsArticle.Url)
+                        UrlLinkBuilder(url = article.Url)
                         Row(
                             verticalAlignment = Alignment.Bottom
                         ) {
                             // check if article contains related articles
-                            if (newsArticle.Related.isNotEmpty()) Text(
+                            if (article.Related.isNotEmpty()) Text(
                                 text = resource.getString(R.string.related),
                                 style = MaterialTheme.typography.body1,
                             )
                             Spacer(modifier = modifier.weight(1f))
                         }
                         // show related articles
-                        for (index in newsArticle.Related.indices) {
+                        for (index in article.Related.indices) {
                             UrlLinkBuilder(
-                                index = (index + 1).toString(), url = newsArticle.Related[index]
+                                index = (index + 1).toString(), url = article.Related[index]
                             )
                         }
                     }

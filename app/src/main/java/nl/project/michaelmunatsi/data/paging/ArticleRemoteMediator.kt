@@ -5,6 +5,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.take
 import nl.project.michaelmunatsi.data.database.ArticleDB
 import nl.project.michaelmunatsi.data.remote.NewsApi
@@ -13,9 +14,7 @@ import nl.project.michaelmunatsi.model.MyAPiResponse
 import nl.project.michaelmunatsi.model.NewsArticle
 import nl.project.michaelmunatsi.model.NewsArticleMapper
 import nl.project.michaelmunatsi.model.RemoteKey
-import nl.project.michaelmunatsi.utils.MyUtility.getMapperResult
 
-// the class contains code for fetching from the API and saving to room
 @OptIn(ExperimentalPagingApi::class)
 class ArticleRemoteMediator(
     private val dataBase: ArticleDB,
@@ -34,13 +33,12 @@ class ArticleRemoteMediator(
             val remoteKey = when (loadType) {
                 LoadType.REFRESH -> null
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
-
                 LoadType.APPEND -> {
                     val remoteKey = dataBase.withTransaction {
                         remoteKeyDao.getRemoteKey()
                     }
                     if (remoteKey.nextId == null) {
-                        return MediatorResult.Success(true)
+                        return MediatorResult.Success(endOfPaginationReached = true)
                     }
                     remoteKey.nextId
                 }
@@ -82,11 +80,19 @@ class ArticleRemoteMediator(
 
     private suspend fun getToken(): String? {
         var token: String? = null
-        newsRepository.authToken.take(1).collect {
+        newsRepository.authToken.take(1).collectLatest {
             it?.let {
                 token = it.AuthToken
             }
         }
         return token
+    }
+
+    // validate API response using news article mapper
+    private fun getMapperResult(result: Result<List<NewsArticle>>): List<NewsArticle> {
+        val mapperResult = result.getOrElse {
+            throw it
+        }
+        return mapperResult
     }
 }

@@ -56,7 +56,7 @@ object Main {
             sharedNewsViewModel.refresh(false)
         }
 
-        // refresh articles if userstate changes from logged in to logged out or vice versa
+        // refresh articles if user state changes from logged in to logged out or vice versa
         LaunchedEffect(Unit) {
             snapshotFlow { userState }.collect {
                 articles.refresh()
@@ -80,6 +80,7 @@ object Main {
                             Article.Layout(
                                 article = item,
                                 onArticleTitleClick = {
+                                    //  check if app is loading, this check will prevent users from clicking article title and navigating to the detail page while the app is still loading.
                                     if (articles.loadState.refresh != LoadState.Loading) {
                                         onTitleClick.invoke(item.Id)
                                     }

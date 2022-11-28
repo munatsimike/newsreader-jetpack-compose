@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 import nl.project.michaelmunatsi.data.database.ArticleDB
 import nl.project.michaelmunatsi.data.paging.ArticleRemoteMediator
 import nl.project.michaelmunatsi.data.remote.NewsApi
-import nl.project.michaelmunatsi.model.MyAPiResponse
 import nl.project.michaelmunatsi.model.NewsArticle
 import nl.project.michaelmunatsi.model.NewsArticleMapper
 import nl.project.michaelmunatsi.model.Token
@@ -29,7 +28,11 @@ class NewsRepository @Inject constructor(
 
     @OptIn(ExperimentalPagingApi::class)
     fun getAllArticles(): Flow<PagingData<NewsArticle>> {
-        return Pager(config = PagingConfig(pageSize = PAGE_SIZE),
+        return Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false
+            ),
             remoteMediator = ArticleRemoteMediator(
                 dataBase = database,
                 newsArticleMapper = newsMapper,
@@ -50,15 +53,13 @@ class NewsRepository @Inject constructor(
             // like article
             return NewsApi.retrofitService.likeArticle(articleId, token.AuthToken)
         }
-        // invalidate paging source
+
         // dislike article
         return NewsApi.retrofitService.disLikeArticle(articleId, token.AuthToken)
     }
 
-    // fetch liked articles from api
-    suspend fun likedArticles(token: Token): ApiResponse<MyAPiResponse> {
-        return NewsApi.retrofitService.likedArticles(token = token.AuthToken)
-    }
+    // fetch liked articles
+    fun likedArticles(): Flow<List<NewsArticle>> = database.newsDao.getLikedArticle()
 
     // like dislike article in local database
     suspend fun likeDislikeRoomDB(isLike: Boolean, id: Int) {

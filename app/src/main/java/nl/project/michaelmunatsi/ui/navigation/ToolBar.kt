@@ -38,7 +38,7 @@ fun NewsReaderToolBar(
                 Text(
                     modifier = modifier.fillMaxWidth(),
                     text = stringResource(id = R.string.app_title),
-                    textAlign = TextAlign.Center,
+                    textAlign = TextAlign.Center
                 )
             }, actions = {
                 IconButton(onClick = {

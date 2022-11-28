@@ -8,10 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -30,7 +27,7 @@ import nl.project.michaelmunatsi.utils.MyUtility.resource
 import nl.project.michaelmunatsi.viewModel.NewsViewModel
 import nl.project.michaelmunatsi.viewModel.UserViewModel
 
-// code for displaying liked articles. Liked articles will be fetched from the remote server
+// code for displaying liked articles. Liked articles will be fetched from room
 object Favourite {
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -43,6 +40,11 @@ object Favourite {
         navigateToHomeScreen: () -> Unit,
         onTitleClick: (id: Int) -> Unit,
     ) {
+
+        LaunchedEffect(Unit) {
+            sharedNewsViewModel.fetchLikedArticles()
+        }
+
         val scope = rememberCoroutineScope()
         // userstate can be logged in or logged out.
         // Depending on the userstate a user can like or dislike any article displayed in the list
@@ -56,7 +58,7 @@ object Favourite {
             SwipeRefresh(
                 state = swipeRefreshState,
                 onRefresh = {
-                    sharedNewsViewModel.loadFavorites()
+                    sharedNewsViewModel.fetchLikedArticles()
                 },
             ) {
                 // display list of article
@@ -91,7 +93,7 @@ object Favourite {
                                 coroutineScope = scope,
                                 scaffoldState = scaffoldState,
                                 actionLabel = resource.getString(R.string.retry)
-                            ) { sharedNewsViewModel.loadFavorites() }
+                            ) { sharedNewsViewModel.fetchLikedArticles() }
                         }
                         // show progress bar
                         NetworkState.Loading -> {
@@ -107,7 +109,7 @@ object Favourite {
         // redirect user to the home screen if he logs out from the favourite screen
         when (userState) {
             is UserState.LoggedOut -> {
-                // marker  for the home screen to know that user logged out from the favourite screen so a refresh is required to clear all liked articles
+                // marker for the home screen to know that user logged out from the favourite screen so a refresh is required to clear all liked articles
                 sharedNewsViewModel.refresh(true)
                 navigateToHomeScreen.invoke()
             }
@@ -115,7 +117,7 @@ object Favourite {
         }
     }
 
-    // show message to tell user that there no like articles
+    // show message to tell user there no like articles
     @Composable
     private fun ShowNoFavoritesMessage(modifier: Modifier = Modifier) {
         Column(
@@ -125,8 +127,8 @@ object Favourite {
         ) {
             Image(
                 modifier = modifier
-                    .height(100.dp)
-                    .width(100.dp),
+                    .height(80.dp)
+                    .width(80.dp),
                 painter = painterResource(id = R.drawable.heart),
                 contentDescription = null
             )

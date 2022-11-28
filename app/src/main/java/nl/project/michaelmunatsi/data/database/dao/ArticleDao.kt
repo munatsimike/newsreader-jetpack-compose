@@ -8,7 +8,6 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import nl.project.michaelmunatsi.model.NewsArticle
 
-
 // CRUD operations for the article table
 @Dao
 interface ArticleDao {
@@ -26,4 +25,7 @@ interface ArticleDao {
 
     @Query("SELECT * FROM article WHERE Id == :id ")
     fun getArticle(id: Int): Flow<NewsArticle>
+
+    @Query("SELECT * FROM article WHERE isLiked == 1 ")
+    fun getLikedArticle(): Flow<List<NewsArticle>>
 }

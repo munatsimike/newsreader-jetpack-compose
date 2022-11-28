@@ -14,31 +14,28 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.data.repository.NewsRepository
 import nl.project.michaelmunatsi.model.NewsArticle
-import nl.project.michaelmunatsi.model.NewsArticleMapper
 import nl.project.michaelmunatsi.model.Token
 import nl.project.michaelmunatsi.model.state.NetworkState
-import nl.project.michaelmunatsi.utils.MyUtility.getMapperResult
 import nl.project.michaelmunatsi.utils.MyUtility.onErrorMessage
 import nl.project.michaelmunatsi.utils.MyUtility.onFailureMessage
-import nl.project.michaelmunatsi.utils.MyUtility.resource
 import javax.inject.Inject
 
 @HiltViewModel
 class NewsViewModel @Inject constructor(
-    private val newsRepository: NewsRepository, private val newsArticleMapper: NewsArticleMapper
+    private val newsRepository: NewsRepository
 ) : ViewModel() {
 
     private val token = MutableStateFlow(Token(""))
     private var _refresh = MutableLiveData(false)
-    val refresh: LiveData<Boolean> = _refresh
-    val networkState = MutableStateFlow<NetworkState>(NetworkState.NotLoading)
-    val allArticles = newsRepository.getAllArticles().cachedIn(viewModelScope)
+    private var _networkState = MutableStateFlow<NetworkState>(NetworkState.NotLoading)
+    private val _article = MutableStateFlow<NewsArticle?>(null)
 
-    private val _article = MutableStateFlow(NewsArticle())
-    val article: StateFlow<NewsArticle> = _article
+    val refresh: LiveData<Boolean> = _refresh
+    val networkState: StateFlow<NetworkState> = _networkState
+    val allArticles = newsRepository.getAllArticles().cachedIn(viewModelScope)
+    val article: StateFlow<NewsArticle?> = _article
 
     init {
         getToken()
@@ -49,27 +46,16 @@ class NewsViewModel @Inject constructor(
             newsRepository.authToken.collectLatest {
                 if (it != null) {
                     token.value = it
-                    getLikedArticles()
                 }
             }
         }
     }
 
-    private fun getLikedArticles() {
+    fun fetchLikedArticles() {
+        _networkState.value = NetworkState.Loading
         viewModelScope.launch {
-            newsRepository.likedArticles(token.value).onSuccess {
-                networkState.value =
-                    NetworkState.Success(data = getMapperResult(newsArticleMapper.mapList(data.Results)))
-            }.onError {
-                if (statusCode.code == 401) {
-                    networkState.value =
-                        NetworkState.Error(resource.getString(R.string.user_not_logged_in))
-                } else {
-                    networkState.value = NetworkState.Error(message())
-                }
-            }.onFailure {
-                networkState.value =
-                    NetworkState.Error(resource.getString(R.string.No_internet_access))
+            newsRepository.likedArticles().collectLatest {
+                _networkState.value = NetworkState.Success(it)
             }
         }
     }
@@ -79,30 +65,24 @@ class NewsViewModel @Inject constructor(
             newsRepository.likeDislikeAPi(articleId, isLike, token = token.value).onSuccess {
                 viewModelScope.launch {
                     newsRepository.likeDislikeRoomDB(isLike, articleId)
-                    getLikedArticles()
                 }
             }.onError {
                 try {
                     onErrorMessage(statusCode = statusCode.code, message())
                 } catch (e: Exception) {
-                    networkState.value = NetworkState.Error(e.message)
+                    _networkState.value = NetworkState.Error(e.message)
                 }
             }.onFailure {
                 try {
                     onFailureMessage()
                 } catch (e: Exception) {
-                    networkState.value = NetworkState.Error(e.message)
+                    _networkState.value = NetworkState.Error(e.message)
                 }
             }
         }
     }
 
-    fun loadFavorites() {
-        networkState.value = NetworkState.Loading
-        getLikedArticles()
-    }
-
-    suspend fun fetchArticle(id: Int) {
+    suspend fun fetchArticleById(id: Int) {
         newsRepository.getArticle(id).collectLatest {
             _article.value = it
         }
