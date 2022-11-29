@@ -15,7 +15,7 @@
     <string name="logout">Logout</string>
     <string name="valid">Valid</string>
     <string name="Invalid_username_password">Invalid username or password</string>
-    <string name="username_must_contain_at_least_8_Character">Username must contain at least 8 Character</string>
+    <string name="username_must_contain_at_least_4_Character">Username must contain at least 4 Character</string>
     <string name="password_must_contain_at_least_8_Character">Password must contain at least 8 Character</string>
     <string name="username_must_contain_letters_numbers_only">Username must contain letters and numbers only</string>
     <string name="must_contain_1_upper_case_character">Must Contain 1 Upper-case Character</string>
@@ -27,5 +27,7 @@
     <string name="share_icon">Share icon</string>
     <string name="invalid_credentials">Invalid credentials</string>
     <string name="favourite_folder_empty">Favorite folder is empty.</string>>
-    <string name="like_articles">Like your favorite articles and find them here later.</string>>
+    <string name="like_articles">Like your favorite articles and find them here later.</string>
+    <string name="password_requirements">Password Requirements</string>
+    <string name="username_requirements">Username Requirements</string>>
 </resources>

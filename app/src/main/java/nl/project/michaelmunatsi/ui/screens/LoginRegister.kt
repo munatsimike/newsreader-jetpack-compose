@@ -9,17 +9,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.sp
 import nl.project.michaelmunatsi.R
 import nl.project.michaelmunatsi.model.User
-import nl.project.michaelmunatsi.model.User.Companion.usernamePassMinChar
 import nl.project.michaelmunatsi.model.state.FormState
 import nl.project.michaelmunatsi.ui.theme.Purple00
 import nl.project.michaelmunatsi.utils.MyUtility.dimen
@@ -35,6 +36,7 @@ object LoginRegister {
     private lateinit var password: MutableState<String>
     private lateinit var username: MutableState<String>
     private lateinit var selectedOption: MutableState<String>
+    private lateinit var passwordFieldIsFocused: MutableState<Boolean>
 
     @Composable
     fun Screen(sharedUserViewModel: UserViewModel, modifier: Modifier = Modifier) {
@@ -51,7 +53,7 @@ object LoginRegister {
         Box(
             Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.60f)
+                .fillMaxHeight(0.65f)
         ) {
             Column(
                 modifier = modifier.fillMaxWidth(),
@@ -101,12 +103,14 @@ object LoginRegister {
         userViewModel: UserViewModel, selectedOption: String, modifier: Modifier = Modifier
     ) {
         val maxChar = 20
-        val colorRed = MaterialTheme.colors.onError
         successErrorMessageLabel = remember { mutableStateOf("") }
         username = remember { mutableStateOf("") }
         password = remember { mutableStateOf("") }
-        labelTextColor = remember { mutableStateOf(colorRed) }
+        labelTextColor = remember { mutableStateOf(Color.Transparent) }
         var passwordVisibility by remember { mutableStateOf(false) }
+        passwordFieldIsFocused = remember {
+            mutableStateOf(false)
+        }
 
         HandleFormStateChanges(userViewModel)
         // icons to show or hide password
@@ -117,7 +121,9 @@ object LoginRegister {
         }
 
         Column(
-            modifier = Modifier.background(MaterialTheme.colors.surface),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.surface),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // label to display success or error messages
@@ -145,6 +151,9 @@ object LoginRegister {
             Spacer(modifier = Modifier.height(dimen.dp_15))
             // password input field
             OutlinedTextField(
+                modifier = modifier.onFocusChanged {
+                    passwordFieldIsFocused.value = it.isFocused
+                },
                 value = password.value,
                 onValueChange = { newtText ->
                     if (newtText.trim().length <= maxChar) password.value = newtText.trim()
@@ -177,7 +186,7 @@ object LoginRegister {
             Spacer(modifier = Modifier.height(dimen.dp_15))
             // login or register button
             Row(
-                modifier = modifier.fillMaxSize(), horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Center
             ) {
                 Button(
                     onClick = {
@@ -186,7 +195,7 @@ object LoginRegister {
                             userViewModel.onFormEvent(FormState.PassTextChange(password.value))
                         }
 
-                        if (username.value.length >= usernamePassMinChar && password.value.length >= usernamePassMinChar) {
+                        if (username.value.length >= 4 && password.value.length >= 8) {
                             userViewModel.userLoginRegister(
                                 // submit username and password to the remote saver
                                 User(username.value, password.value), selectedOption
@@ -198,9 +207,19 @@ object LoginRegister {
                     Text(text = selectedOption, fontSize = dimen.sp_20)
                 }
             }
+            Spacer(modifier = Modifier.height(dimen.dp_10))
+            if (selectedOption == stringResource(id = R.string.register)) {
+                if (passwordFieldIsFocused.value) {
+                    ShowPasswordRequirements()
+                } else {
+                    ShowUsernameRequirements()
+                }
+            }
 
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
+
 
     // handle state changes
     @Composable
@@ -209,6 +228,7 @@ object LoginRegister {
         when (state) {
             is FormState.Error -> {
                 // display error
+                labelTextColor.value = MaterialTheme.colors.onError
                 successErrorMessageLabel.value = (state as FormState.Error).message
             }
             is FormState.ToggleForm -> {
@@ -218,6 +238,7 @@ object LoginRegister {
             }
             is FormState.Success -> {
                 clearFromFields()
+                userViewModel.onFormEvent(FormState.Initial)
                 selectedOption.value = resource.getString(R.string.login)
                 labelTextColor.value = MaterialTheme.colors.primaryVariant
                 successErrorMessageLabel.value = (state as FormState.Success).message
@@ -246,5 +267,58 @@ object LoginRegister {
             return MaterialTheme.colors.onPrimary
         }
         return MaterialTheme.colors.onSurface
+    }
+
+    @Composable
+    private fun ShowPasswordRequirements(modifier: Modifier = Modifier) {
+        Column(
+            modifier = modifier.padding(dimen.dp_15)
+        ) {
+            Text(
+                text = stringResource(id = R.string.password_requirements),
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.onSurface
+            )
+            Text(
+                text = stringResource(id = R.string.must_contain_1_lower_case_character),
+                color = MaterialTheme.colors.onSurface
+            )
+            Text(
+                text = stringResource(id = R.string.must_contain_1_special_character),
+                color = MaterialTheme.colors.onSurface
+            )
+            Text(
+                text = stringResource(id = R.string.must_contain_1_upper_case_character),
+                color = MaterialTheme.colors.onSurface
+            )
+            Text(
+                text = stringResource(id = R.string.password_must_contain_at_least_8_Character),
+                color = MaterialTheme.colors.onSurface
+            )
+        }
+    }
+
+    @Composable
+    private fun ShowUsernameRequirements(modifier: Modifier = Modifier) {
+        Column(
+            modifier = modifier.padding(dimen.dp_15)
+        ) {
+            Text(
+                text = stringResource(id = R.string.username_requirements),
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.onSurface
+            )
+
+            Text(
+                text = stringResource(id = R.string.username_must_contain_letters_numbers_only).replace(
+                    stringResource(id = R.string.username), ""
+                ), color = MaterialTheme.colors.onSurface
+            )
+            Text(
+                text = stringResource(id = R.string.username_must_contain_at_least_4_Character).replace(
+                    stringResource(id = R.string.username), ""
+                ), color = MaterialTheme.colors.onSurface
+            )
+        }
     }
 }
