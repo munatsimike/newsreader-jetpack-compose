@@ -19,17 +19,3 @@ abstract class ArticleDB : RoomDatabase() {
     abstract val newsDao: ArticleDao
     abstract val remoteKeyDao: RemoteKeyDao
 }
-
-private lateinit var instance: ArticleDB
-
-fun createDB(context: Context): ArticleDB {
-    synchronized(ArticleDB::class.java) {
-        if (!::instance.isInitialized) {
-            instance = Room.databaseBuilder(
-                context.applicationContext,
-                ArticleDB::class.java, "article_db.db"
-            ).fallbackToDestructiveMigration().build()
-        }
-    }
-    return instance
-}
