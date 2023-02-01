@@ -26,7 +26,8 @@ fun createDB(context: Context): ArticleDB {
     synchronized(ArticleDB::class.java) {
         if (!::instance.isInitialized) {
             instance = Room.databaseBuilder(
-                context.applicationContext, ArticleDB::class.java, "article_db.db"
+                context.applicationContext,
+                ArticleDB::class.java, "article_db.db"
             ).fallbackToDestructiveMigration().build()
         }
     }

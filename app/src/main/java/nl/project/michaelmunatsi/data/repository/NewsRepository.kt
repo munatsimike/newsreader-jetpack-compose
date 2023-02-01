@@ -8,7 +8,7 @@ import com.skydoves.sandwich.ApiResponse
 import kotlinx.coroutines.flow.Flow
 import nl.project.michaelmunatsi.data.database.ArticleDB
 import nl.project.michaelmunatsi.data.paging.ArticleRemoteMediator
-import nl.project.michaelmunatsi.data.remote.NewsApi
+import nl.project.michaelmunatsi.data.remote.NewsApiService
 import nl.project.michaelmunatsi.model.NewsArticle
 import nl.project.michaelmunatsi.model.NewsArticleMapper
 import nl.project.michaelmunatsi.model.Token
@@ -22,6 +22,7 @@ import javax.inject.Singleton
 class NewsRepository @Inject constructor(
     private val database: ArticleDB,
     private val newsMapper: NewsArticleMapper,
+    private val newsApiService: NewsApiService,
 
     userManager: UserManager
 ) : BaseRepository(userManager) {
@@ -36,7 +37,8 @@ class NewsRepository @Inject constructor(
             remoteMediator = ArticleRemoteMediator(
                 dataBase = database,
                 newsArticleMapper = newsMapper,
-                this
+                this,
+                newsApiService = newsApiService
             ),
             pagingSourceFactory = { database.newsDao.getAllArticles() }).flow
     }
@@ -51,11 +53,11 @@ class NewsRepository @Inject constructor(
     ): ApiResponse<ResponseBody> {
         if (isLike) {
             // like article
-            return NewsApi.retrofitService.likeArticle(articleId, token.AuthToken)
+            return newsApiService.likeArticle(articleId, token.AuthToken)
         }
 
         // dislike article
-        return NewsApi.retrofitService.disLikeArticle(articleId, token.AuthToken)
+        return newsApiService.disLikeArticle(articleId, token.AuthToken)
     }
 
     // fetch liked articles

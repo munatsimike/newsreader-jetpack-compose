@@ -41,7 +41,8 @@ fun NewsReaderToolBar(
                     textAlign = TextAlign.Center
                 )
             }, actions = {
-                IconButton(onClick = {
+                IconButton(
+                    onClick = {
                     scope.launch {
                         modalBottomSheetState.show()
                     }

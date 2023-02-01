@@ -8,7 +8,7 @@ import androidx.room.withTransaction
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.take
 import nl.project.michaelmunatsi.data.database.ArticleDB
-import nl.project.michaelmunatsi.data.remote.NewsApi
+import nl.project.michaelmunatsi.data.remote.NewsApiService
 import nl.project.michaelmunatsi.data.repository.NewsRepository
 import nl.project.michaelmunatsi.model.MyAPiResponse
 import nl.project.michaelmunatsi.model.NewsArticle
@@ -19,7 +19,8 @@ import nl.project.michaelmunatsi.model.RemoteKey
 class ArticleRemoteMediator(
     private val dataBase: ArticleDB,
     private val newsArticleMapper: NewsArticleMapper,
-    private val newsRepository: NewsRepository
+    private val newsRepository: NewsRepository,
+    private val newsApiService: NewsApiService
 ) : RemoteMediator<Int, NewsArticle>() {
 
     private val articleDao = dataBase.newsDao
@@ -44,9 +45,9 @@ class ArticleRemoteMediator(
                 }
             }
             val result = if (remoteKey == null) {
-                NewsApi.retrofitService.getInitArticles(token = getToken())
+                newsApiService.getInitArticles(token = getToken())
             } else {
-                NewsApi.retrofitService.getMoreArticles(remoteKey, token = getToken())
+                newsApiService.getMoreArticles(remoteKey, token = getToken())
             }
 
             if (loadType == LoadType.REFRESH) {
